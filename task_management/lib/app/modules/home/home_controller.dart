@@ -5,6 +5,7 @@ import 'dart:math';
 import '../../core/theme/app_themes.dart';
 import '../../core/widgets/app_snackbar.dart';
 import '../../data/models/task_model.dart';
+import '../../data/services/daily_task_reset_service.dart';
 import '../../data/services/haptic_service.dart';
 import '../../data/services/hive_service.dart';
 import '../../data/services/theme_service.dart';
@@ -43,7 +44,7 @@ class HomeController extends GetxController {
     dailyRhythmLoaded.value = false;
     await HiveService.init();
     _loadDailyRhythm();
-    await _resetTasksIfNeeded();
+    await DailyTaskResetService.ensureResetIfNeeded();
     tasks.assignAll(HiveService.getTasks());
     dailyRhythmLoaded.value = true;
     loading.value = false;
@@ -72,24 +73,8 @@ class HomeController extends GetxController {
     );
     sleepTime.value = sleep;
     wakeTime.value = wake;
-    await _resetTasksIfNeeded();
+    await DailyTaskResetService.ensureResetIfNeeded();
     tasks.assignAll(HiveService.getTasks());
-  }
-
-  Future<void> _resetTasksIfNeeded() async {
-    final resetKey = _dateKey(DateTime.now());
-    if (ThemeService.lastDailyResetDate == resetKey) {
-      return;
-    }
-
-    for (final task in HiveService.getTasks()) {
-      if (task.isCompleted) {
-        task.isCompleted = false;
-        await HiveService.updateTask(task);
-      }
-    }
-
-    await ThemeService.saveLastDailyResetDate(resetKey);
   }
 
   String formatTimeLabel(TimeOfDay? time) {
@@ -125,13 +110,6 @@ class HomeController extends GetxController {
     final hour = time.hour.toString().padLeft(2, '0');
     final minute = time.minute.toString().padLeft(2, '0');
     return '$hour:$minute';
-  }
-
-  String _dateKey(DateTime date) {
-    final year = date.year.toString().padLeft(4, '0');
-    final month = date.month.toString().padLeft(2, '0');
-    final day = date.day.toString().padLeft(2, '0');
-    return '$year-$month-$day';
   }
 
   void addTask() {
