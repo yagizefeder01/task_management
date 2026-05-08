@@ -6,6 +6,7 @@ import '../../core/widgets/app_snackbar.dart';
 import '../../data/models/task_model.dart';
 import '../../data/services/haptic_service.dart';
 import '../../data/services/hive_service.dart';
+import '../home/home_controller.dart';
 
 class TaskDetailController extends GetxController {
   final titleController = TextEditingController();
@@ -116,9 +117,27 @@ class TaskDetailController extends GetxController {
       return;
     }
 
+    final removedTask = TaskModel(
+      title: task!.title,
+      priority: task!.priority,
+      energyLevel: task!.energyLevel,
+      isCompleted: task!.isCompleted,
+      dueDate: task!.dueDate,
+    );
+
     await HiveService.deleteTask(task!);
     await HapticService.vibration();
     Get.back(result: true);
+    AppSnackbar.showDelete(
+      removedTask.title,
+      'delete_success'.tr,
+      onUndo: () async {
+        await HiveService.addTask(removedTask);
+        if (Get.isRegistered<HomeController>()) {
+          await Get.find<HomeController>().loadTasks();
+        }
+      },
+    );
   }
 
   Future<void> selectDueDate(BuildContext context) async {

@@ -15,11 +15,11 @@ Future<void> main() async {
 
   await ThemeService.init();
 
-  runApp(const FocusLocalApp());
+  runApp(const ClutchFlowApp());
 }
 
-class FocusLocalApp extends StatelessWidget {
-  const FocusLocalApp({super.key});
+class ClutchFlowApp extends StatelessWidget {
+  const ClutchFlowApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class FocusLocalApp extends StatelessWidget {
 
       return GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'FocusLocal',
+        title: 'ClutchFlow',
         locale: ThemeService.currentLocale,
         translations: AppTranslations(),
         fallbackLocale: const Locale('en', 'US'),

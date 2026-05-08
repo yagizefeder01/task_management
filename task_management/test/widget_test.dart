@@ -12,7 +12,7 @@ import 'package:focustasklocal_app/main.dart';
 
 void main() {
   testWidgets('App loads without errors', (WidgetTester tester) async {
-    await tester.pumpWidget(const FocusLocalApp());
+    await tester.pumpWidget(const ClutchFlowApp());
 
     expect(find.byType(Scaffold), findsOneWidget);
   });

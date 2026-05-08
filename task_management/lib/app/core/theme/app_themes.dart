@@ -141,6 +141,112 @@ class AppTaskPalette extends ThemeExtension<AppTaskPalette> {
   }
 }
 
+class AppSemanticPalette extends ThemeExtension<AppSemanticPalette> {
+  const AppSemanticPalette({
+    required this.transparent,
+    required this.contrastForeground,
+    required this.mutedForeground,
+    required this.sheetHandle,
+    required this.softSurface,
+    required this.softSurfaceBorder,
+    required this.success,
+    required this.warning,
+    required this.danger,
+    required this.onAccent,
+    required this.onDanger,
+    required this.snackbarSuccess,
+    required this.snackbarDanger,
+    required this.overlayShadow,
+  });
+
+  final Color transparent;
+  final Color contrastForeground;
+  final Color mutedForeground;
+  final Color sheetHandle;
+  final Color softSurface;
+  final Color softSurfaceBorder;
+  final Color success;
+  final Color warning;
+  final Color danger;
+  final Color onAccent;
+  final Color onDanger;
+  final Color snackbarSuccess;
+  final Color snackbarDanger;
+  final Color overlayShadow;
+
+  @override
+  AppSemanticPalette copyWith({
+    Color? transparent,
+    Color? contrastForeground,
+    Color? mutedForeground,
+    Color? sheetHandle,
+    Color? softSurface,
+    Color? softSurfaceBorder,
+    Color? success,
+    Color? warning,
+    Color? danger,
+    Color? onAccent,
+    Color? onDanger,
+    Color? snackbarSuccess,
+    Color? snackbarDanger,
+    Color? overlayShadow,
+  }) {
+    return AppSemanticPalette(
+      transparent: transparent ?? this.transparent,
+      contrastForeground: contrastForeground ?? this.contrastForeground,
+      mutedForeground: mutedForeground ?? this.mutedForeground,
+      sheetHandle: sheetHandle ?? this.sheetHandle,
+      softSurface: softSurface ?? this.softSurface,
+      softSurfaceBorder: softSurfaceBorder ?? this.softSurfaceBorder,
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      danger: danger ?? this.danger,
+      onAccent: onAccent ?? this.onAccent,
+      onDanger: onDanger ?? this.onDanger,
+      snackbarSuccess: snackbarSuccess ?? this.snackbarSuccess,
+      snackbarDanger: snackbarDanger ?? this.snackbarDanger,
+      overlayShadow: overlayShadow ?? this.overlayShadow,
+    );
+  }
+
+  @override
+  AppSemanticPalette lerp(
+    covariant ThemeExtension<AppSemanticPalette>? other,
+    double t,
+  ) {
+    if (other is! AppSemanticPalette) {
+      return this;
+    }
+
+    return AppSemanticPalette(
+      transparent: Color.lerp(transparent, other.transparent, t) ?? transparent,
+      contrastForeground:
+          Color.lerp(contrastForeground, other.contrastForeground, t) ??
+          contrastForeground,
+      mutedForeground:
+          Color.lerp(mutedForeground, other.mutedForeground, t) ??
+          mutedForeground,
+      sheetHandle: Color.lerp(sheetHandle, other.sheetHandle, t) ?? sheetHandle,
+      softSurface: Color.lerp(softSurface, other.softSurface, t) ?? softSurface,
+      softSurfaceBorder:
+          Color.lerp(softSurfaceBorder, other.softSurfaceBorder, t) ??
+          softSurfaceBorder,
+      success: Color.lerp(success, other.success, t) ?? success,
+      warning: Color.lerp(warning, other.warning, t) ?? warning,
+      danger: Color.lerp(danger, other.danger, t) ?? danger,
+      onAccent: Color.lerp(onAccent, other.onAccent, t) ?? onAccent,
+      onDanger: Color.lerp(onDanger, other.onDanger, t) ?? onDanger,
+      snackbarSuccess:
+          Color.lerp(snackbarSuccess, other.snackbarSuccess, t) ??
+          snackbarSuccess,
+      snackbarDanger:
+          Color.lerp(snackbarDanger, other.snackbarDanger, t) ?? snackbarDanger,
+      overlayShadow:
+          Color.lerp(overlayShadow, other.overlayShadow, t) ?? overlayShadow,
+    );
+  }
+}
+
 extension AppThemeSurfaceExtension on ThemeData {
   AppSurfacePalette get surfacePalette =>
       extension<AppSurfacePalette>() ??
@@ -156,6 +262,15 @@ extension AppThemeSurfaceExtension on ThemeData {
   AppTaskPalette get taskPalette =>
       extension<AppTaskPalette>() ??
       AppThemes.buildTaskPalette(cardColor, brightness: brightness);
+
+  AppSemanticPalette get semanticPalette =>
+      extension<AppSemanticPalette>() ??
+      AppThemes.buildSemanticPalette(
+        cardColor,
+        onSurface: colorScheme.onSurface,
+        shadowColor: shadowColor,
+        brightness: brightness,
+      );
 }
 
 class AppThemes {
@@ -313,6 +428,12 @@ class AppThemes {
       cardColor,
       brightness: brightness,
     );
+    final AppSemanticPalette semanticPalette = buildSemanticPalette(
+      cardColor,
+      onSurface: onSurface,
+      shadowColor: shadowColor,
+      brightness: brightness,
+    );
     final AppTaskPalette taskPalette = buildTaskPalette(
       cardColor,
       brightness: brightness,
@@ -330,6 +451,7 @@ class AppThemes {
       brightness: brightness,
       extensions: <ThemeExtension<dynamic>>[
         AppSurfacePalette(cardBorder: cardBorder),
+        semanticPalette,
         taskPalette,
       ],
       shadowColor: Colors.transparent,
@@ -465,24 +587,53 @@ class AppThemes {
   }) {
     final bool isDark = brightness == Brightness.dark;
 
+    if (!isDark) {
+      final Color neutralTaskBackground = Color.alphaBlend(
+        const Color(0xFF8B5E34).withValues(alpha: 0.018),
+        cardColor,
+      );
+      final Color neutralTaskBorder = surfaceBorderFor(
+        neutralTaskBackground,
+        brightness: brightness,
+      );
+
+      return AppTaskPalette(
+        high: AppTaskPriorityTone(
+          background: neutralTaskBackground,
+          border: neutralTaskBorder,
+          accent: const Color(0xFFB42318),
+        ),
+        medium: AppTaskPriorityTone(
+          background: neutralTaskBackground,
+          border: neutralTaskBorder,
+          accent: const Color(0xFFB54708),
+        ),
+        low: AppTaskPriorityTone(
+          background: neutralTaskBackground,
+          border: neutralTaskBorder,
+          accent: const Color(0xFF027A48),
+        ),
+      );
+    }
+
     return AppTaskPalette(
       high: _taskPriorityTone(
         cardColor,
         brightness: brightness,
-        accent: isDark ? const Color(0xFFF87171) : const Color(0xFFB42318),
-        tintOpacity: isDark ? 0.10 : 0.035,
+        accent: const Color(0xFFF87171),
+        tintOpacity: 0.10,
       ),
       medium: _taskPriorityTone(
         cardColor,
         brightness: brightness,
-        accent: isDark ? const Color(0xFFFBBF24) : const Color(0xFFB54708),
-        tintOpacity: isDark ? 0.10 : 0.04,
+        accent: const Color(0xFFFBBF24),
+        tintOpacity: 0.10,
       ),
       low: _taskPriorityTone(
         cardColor,
         brightness: brightness,
-        accent: isDark ? const Color(0xFF34D399) : const Color(0xFF027A48),
-        tintOpacity: isDark ? 0.10 : 0.04,
+        accent: const Color(0xFF34D399),
+        tintOpacity: 0.10,
       ),
     );
   }
@@ -502,6 +653,48 @@ class AppThemes {
       background: background,
       border: surfaceBorderFor(background, brightness: brightness),
       accent: accent,
+    );
+  }
+
+  static AppSemanticPalette buildSemanticPalette(
+    Color cardColor, {
+    required Color onSurface,
+    required Color shadowColor,
+    required Brightness brightness,
+  }) {
+    final bool isDark = brightness == Brightness.dark;
+    final Color softSurface = Color.alphaBlend(
+      (isDark ? Colors.white : Colors.black).withValues(
+        alpha: isDark ? 0.035 : 0.025,
+      ),
+      cardColor,
+    );
+
+    final Color danger = isDark
+        ? const Color(0xFFF87171)
+        : const Color(0xFFB42318);
+    final Color warning = isDark
+        ? const Color(0xFFFBBF24)
+        : const Color(0xFFB54708);
+    final Color success = isDark
+        ? const Color(0xFF34D399)
+        : const Color(0xFF027A48);
+
+    return AppSemanticPalette(
+      transparent: Colors.transparent,
+      contrastForeground: onSurface,
+      mutedForeground: onSurface.withValues(alpha: isDark ? 0.72 : 0.64),
+      sheetHandle: surfaceBorderFor(softSurface, brightness: brightness),
+      softSurface: softSurface,
+      softSurfaceBorder: surfaceBorderFor(softSurface, brightness: brightness),
+      success: success,
+      warning: warning,
+      danger: danger,
+      onAccent: isDark ? cardColor : Colors.white,
+      onDanger: Colors.white,
+      snackbarSuccess: success.withValues(alpha: 0.80),
+      snackbarDanger: danger.withValues(alpha: 0.80),
+      overlayShadow: shadowColor,
     );
   }
 }

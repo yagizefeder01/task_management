@@ -13,12 +13,17 @@ import 'home_controller.dart';
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
 
+  String _formatTaskDate(BuildContext context, DateTime value) {
+    return MaterialLocalizations.of(context).formatMediumDate(value.toLocal());
+  }
+
   Future<void> _pickSleepOrWakeTime(
     BuildContext context, {
     required bool isSleep,
     required Rx<TimeOfDay?> target,
   }) async {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
     final TimeOfDay fallback = isSleep
         ? const TimeOfDay(hour: 23, minute: 0)
         : const TimeOfDay(hour: 7, minute: 0);
@@ -34,16 +39,13 @@ class HomeView extends GetView<HomeController> {
     final picked = await showModalBottomSheet<TimeOfDay>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: theme.semanticPalette.transparent,
       builder: (context) {
         final theme = Theme.of(context);
+        final semantics = theme.semanticPalette;
         final accentColor = theme.colorScheme.secondary;
-        final Color surfaceColor = isDark
-            ? const Color(0xFF111827)
-            : Colors.white;
-        final Color textColor = isDark
-            ? const Color(0xFFE5E7EB)
-            : const Color(0xFF111827);
+        final Color surfaceColor = theme.cardColor;
+        final Color textColor = semantics.contrastForeground;
         final double maxSheetHeight =
             (MediaQuery.of(context).size.height * 0.56).clamp(300.0, 420.0);
 
@@ -62,6 +64,7 @@ class HomeView extends GetView<HomeController> {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(28),
                 ),
+                border: Border.all(color: theme.surfaceBorderColor),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -70,9 +73,7 @@ class HomeView extends GetView<HomeController> {
                     width: 42,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF334155)
-                          : const Color(0xFFD6D3D1),
+                      color: semantics.sheetHandle,
                       borderRadius: BorderRadius.circular(999),
                     ),
                   ),
@@ -112,6 +113,7 @@ class HomeView extends GetView<HomeController> {
                               backgroundColor: isDark
                                   ? accentColor
                                   : theme.colorScheme.primary,
+                              foregroundColor: theme.semanticPalette.onAccent,
                             ),
                             child: Text('save'.tr),
                           ),
@@ -229,7 +231,7 @@ class HomeView extends GetView<HomeController> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accent,
-                    foregroundColor: Colors.white,
+                    foregroundColor: theme.semanticPalette.onAccent,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -282,7 +284,7 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
       ),
-      backgroundColor: Colors.transparent,
+      backgroundColor: theme.semanticPalette.transparent,
       isScrollControlled: true,
     );
   }
@@ -312,11 +314,11 @@ class HomeView extends GetView<HomeController> {
         ? theme.colorScheme.primary
         : iconPalette.tasks;
     final Color primaryActionForeground = switch (currentTheme) {
-      AppThemePreset.royalIvory => Colors.white,
+      AppThemePreset.royalIvory => theme.semanticPalette.onAccent,
       AppThemePreset.midnightBlack =>
         (theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor),
       AppThemePreset.matteBlack => const Color(0xFF171717),
-      AppThemePreset.carbonBlue => Colors.white,
+      AppThemePreset.carbonBlue => theme.semanticPalette.onAccent,
     };
     final Color dueDateBadgeBackground =
         currentTheme == AppThemePreset.midnightBlack
@@ -403,7 +405,7 @@ class HomeView extends GetView<HomeController> {
                           ),
                           _FocusBadge(
                             label:
-                                '${'due_date'.tr}: ${task.dueDate.toLocal().toString().split(' ').first}',
+                                '${'due_date'.tr}: ${_formatTaskDate(context, task.dueDate)}',
                             color: accentAction,
                             backgroundColor: dueDateBadgeBackground,
                             borderColor: dueDateBadgeBorder,
@@ -574,10 +576,31 @@ class HomeView extends GetView<HomeController> {
                     final selectedWake = Rx<TimeOfDay?>(
                       controller.wakeTime.value,
                     );
-                    final Color timeButtonForeground = colorScheme.onSurface;
-                    final Color timeButtonBackground =
-                        theme.inputDecorationTheme.fillColor ?? cardColor;
-                    final Color timeButtonBorder = borderColor;
+                    final bool isRoyalIvory =
+                        currentTheme == AppThemePreset.royalIvory;
+                    final Color timeButtonForeground = isRoyalIvory
+                        ? const Color(0xFF7C5A2F)
+                        : colorScheme.onSurface;
+                    final Color timeButtonBackground = isRoyalIvory
+                        ? Color.alphaBlend(
+                            colorScheme.primary.withValues(alpha: 0.035),
+                            cardColor,
+                          )
+                        : theme.inputDecorationTheme.fillColor ?? cardColor;
+                    final Color timeButtonBorder = isRoyalIvory
+                        ? Color.alphaBlend(
+                            colorScheme.primary.withValues(alpha: 0.10),
+                            cardColor,
+                          )
+                        : borderColor;
+                    final Color saveButtonBackground = isRoyalIvory
+                        ? const Color(0xFF9C6B38)
+                        : isDark
+                        ? colorScheme.secondary
+                        : colorScheme.primary;
+                    final Color saveButtonForeground = isRoyalIvory
+                        ? const Color(0xFFFFFBF5)
+                        : theme.semanticPalette.onAccent;
 
                     return Container(
                       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -617,7 +640,7 @@ class HomeView extends GetView<HomeController> {
                                       backgroundColor: timeButtonBackground,
                                       side: BorderSide(color: timeButtonBorder),
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 14,
+                                        vertical: 13,
                                         horizontal: 12,
                                       ),
                                       shape: RoundedRectangleBorder(
@@ -652,7 +675,7 @@ class HomeView extends GetView<HomeController> {
                                       backgroundColor: timeButtonBackground,
                                       side: BorderSide(color: timeButtonBorder),
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 14,
+                                        vertical: 13,
                                         horizontal: 12,
                                       ),
                                       shape: RoundedRectangleBorder(
@@ -702,10 +725,8 @@ class HomeView extends GetView<HomeController> {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: isDark
-                                    ? colorScheme.secondary
-                                    : colorScheme.primary,
-                                foregroundColor: Colors.white,
+                                backgroundColor: saveButtonBackground,
+                                foregroundColor: saveButtonForeground,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
                                 ),
@@ -757,6 +778,20 @@ class HomeView extends GetView<HomeController> {
                           final Color cardBg = taskTone.background;
                           final Color cardBorder = taskTone.border;
                           final Color accent = taskTone.accent;
+                          final Color editDividerColor = switch (currentTheme) {
+                            AppThemePreset.royalIvory => const Color(
+                              0xFFB07A3E,
+                            ),
+                            AppThemePreset.midnightBlack => accent.withValues(
+                              alpha: 0.52,
+                            ),
+                            AppThemePreset.matteBlack => accent.withValues(
+                              alpha: 0.44,
+                            ),
+                            AppThemePreset.carbonBlue => accent.withValues(
+                              alpha: 0.46,
+                            ),
+                          };
                           final Color titleColor = theme.colorScheme.onSurface;
                           final Color subtitleColor = theme
                               .colorScheme
@@ -774,30 +809,30 @@ class HomeView extends GetView<HomeController> {
                               background: ClipRRect(
                                 borderRadius: BorderRadius.circular(16),
                                 child: Container(
-                                  decoration: const BoxDecoration(
+                                  decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       begin: Alignment.centerRight,
                                       end: Alignment.centerLeft,
                                       colors: [
-                                        Color(0xFFE53935),
-                                        Color(0xFFB71C1C),
+                                        theme.semanticPalette.danger,
+                                        theme.semanticPalette.snackbarDanger,
                                       ],
                                     ),
                                   ),
                                   alignment: Alignment.centerRight,
                                   padding: const EdgeInsets.only(right: 18),
-                                  child: const Row(
+                                  child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
                                         Icons.delete_outline,
-                                        color: Colors.white,
+                                        color: theme.semanticPalette.onDanger,
                                       ),
-                                      SizedBox(width: 8),
+                                      const SizedBox(width: 8),
                                       Text(
                                         'Sil',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: theme.semanticPalette.onDanger,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
                                         ),
@@ -823,9 +858,15 @@ class HomeView extends GetView<HomeController> {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
-                                    vertical: 4,
+                                    vertical: 2,
                                   ),
                                   child: ListTile(
+                                    dense: true,
+                                    minVerticalPadding: 2,
+                                    visualDensity: const VisualDensity(
+                                      horizontal: 0,
+                                      vertical: -2,
+                                    ),
                                     contentPadding: const EdgeInsets.only(
                                       left: 0,
                                       right: 12,
@@ -833,7 +874,8 @@ class HomeView extends GetView<HomeController> {
                                     leading: Checkbox(
                                       value: task.isCompleted,
                                       activeColor: accent,
-                                      checkColor: Colors.white,
+                                      checkColor:
+                                          theme.semanticPalette.onAccent,
                                       side: isDark
                                           ? null
                                           : BorderSide(
@@ -852,7 +894,7 @@ class HomeView extends GetView<HomeController> {
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 10,
-                                            vertical: 4,
+                                            vertical: 3,
                                           ),
                                           decoration: BoxDecoration(
                                             color: accent.withValues(
@@ -873,7 +915,7 @@ class HomeView extends GetView<HomeController> {
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(height: 10),
+                                        const SizedBox(height: 6),
                                         Text(
                                           task.title,
                                           style: TextStyle(
@@ -884,9 +926,9 @@ class HomeView extends GetView<HomeController> {
                                       ],
                                     ),
                                     subtitle: Padding(
-                                      padding: const EdgeInsets.only(top: 6),
+                                      padding: const EdgeInsets.only(top: 4),
                                       child: Text(
-                                        '${'due_date'.tr}: ${task.dueDate.toLocal().toString().split(' ').first}',
+                                        '${'due_date'.tr}: ${_formatTaskDate(context, task.dueDate)}',
                                         style: TextStyle(color: subtitleColor),
                                       ),
                                     ),
@@ -909,9 +951,7 @@ class HomeView extends GetView<HomeController> {
                                                       vertical: 2,
                                                     ),
                                                 decoration: BoxDecoration(
-                                                  color: cardBorder.withValues(
-                                                    alpha: isDark ? 0.3 : 0.8,
-                                                  ),
+                                                  color: editDividerColor,
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                         999,
@@ -924,11 +964,9 @@ class HomeView extends GetView<HomeController> {
                                               width: 32,
                                               height: 32,
                                               decoration: BoxDecoration(
-                                                color: isDark
-                                                    ? Colors.transparent
-                                                    : accent.withValues(
-                                                        alpha: 0.10,
-                                                      ),
+                                                color: theme
+                                                    .semanticPalette
+                                                    .transparent,
                                                 borderRadius:
                                                     BorderRadius.circular(10),
                                               ),
@@ -939,6 +977,10 @@ class HomeView extends GetView<HomeController> {
                                                     ? theme
                                                           .colorScheme
                                                           .onSurface
+                                                    : currentTheme ==
+                                                          AppThemePreset
+                                                              .royalIvory
+                                                    ? const Color(0xFF8A5A12)
                                                     : accent,
                                               ),
                                             ),
@@ -1097,7 +1139,7 @@ class _PickTaskIntroCard extends StatelessWidget {
         ? theme.colorScheme.secondary
         : theme.colorScheme.primary;
     final pickTaskFabIconColor = switch (currentTheme) {
-      AppThemePreset.royalIvory => Colors.white,
+      AppThemePreset.royalIvory => theme.semanticPalette.onAccent,
       AppThemePreset.midnightBlack =>
         (theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor),
       AppThemePreset.matteBlack =>
@@ -1108,7 +1150,7 @@ class _PickTaskIntroCard extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 240),
       child: Material(
-        color: Colors.transparent,
+        color: theme.semanticPalette.transparent,
         child: Container(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
           decoration: BoxDecoration(

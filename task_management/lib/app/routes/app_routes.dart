@@ -3,6 +3,7 @@ class AppRoutes {
 
   static const String launch = '/launch';
   static const String home = '/';
+  static const String books = '/books';
   static const String shoppingList = '/shopping-list';
   static const String periodicTracking = '/periodic-tracking';
   static const String taskDetail = '/task-detail';

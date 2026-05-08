@@ -1,11 +1,11 @@
 {
-    "name": "focustasklocal_app",
-    "short_name": "focustasklocal_app",
+    "name": "ClutchFlow",
+    "short_name": "ClutchFlow",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "ClutchFlow personal organization app.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

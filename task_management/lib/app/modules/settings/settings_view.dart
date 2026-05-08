@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../data/services/theme_service.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_themes.dart';
 import '../../core/widgets/app_side_drawer.dart';
 import 'settings_controller.dart';
@@ -164,11 +163,11 @@ class SettingsView extends GetView<SettingsController> {
     final Color sleepButtonForeground =
         currentTheme == AppThemePreset.carbonBlue
         ? pageBackground
-        : Colors.white;
+        : theme.semanticPalette.onAccent;
     final Color fieldFillColor =
         theme.inputDecorationTheme.fillColor ?? surfaceColor;
     final Color shadowColor =
-        theme.cardTheme.shadowColor ?? Colors.black.withValues(alpha: 0.08);
+        theme.cardTheme.shadowColor ?? theme.semanticPalette.overlayShadow;
 
     return Scaffold(
       drawer: const AppSideDrawer(),
@@ -223,7 +222,7 @@ class SettingsView extends GetView<SettingsController> {
                         );
 
                         return Material(
-                          color: Colors.transparent,
+                          color: theme.semanticPalette.transparent,
                           child: InkWell(
                             borderRadius: BorderRadius.circular(14),
                             onTap: () => _showLanguageSheet(context, isDark),

@@ -3,14 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../theme/app_themes.dart';
+
 class AppSnackbar {
   static void showSuccess(String title, String message) {
+    final theme = Get.theme;
     Get.snackbar(
       title,
       message,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xCC16A34A),
-      colorText: Colors.white,
+      backgroundColor: theme.semanticPalette.snackbarSuccess,
+      colorText: theme.semanticPalette.onAccent,
       margin: const EdgeInsets.all(14),
       borderRadius: 14,
       duration: const Duration(seconds: 2),
@@ -18,12 +21,13 @@ class AppSnackbar {
   }
 
   static void showError(String title, String message) {
+    final theme = Get.theme;
     Get.snackbar(
       title,
       message,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xCCD92D20),
-      colorText: Colors.white,
+      backgroundColor: theme.semanticPalette.snackbarDanger,
+      colorText: theme.semanticPalette.onDanger,
       margin: const EdgeInsets.all(14),
       borderRadius: 14,
       duration: const Duration(seconds: 3),
@@ -36,12 +40,13 @@ class AppSnackbar {
     FutureOr<void> Function()? onUndo,
     Color? backgroundColor,
   }) {
+    final theme = Get.theme;
     Get.snackbar(
       title,
       message,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: backgroundColor ?? const Color(0xCCD92D20),
-      colorText: Colors.white,
+      backgroundColor: backgroundColor ?? theme.semanticPalette.snackbarDanger,
+      colorText: theme.semanticPalette.onDanger,
       margin: const EdgeInsets.all(14),
       borderRadius: 14,
       duration: const Duration(seconds: 3),
@@ -54,8 +59,8 @@ class AppSnackbar {
               },
               child: Text(
                 'undo'.tr,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: theme.semanticPalette.onDanger,
                   fontWeight: FontWeight.w700,
                 ),
               ),

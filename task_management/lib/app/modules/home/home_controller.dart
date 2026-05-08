@@ -28,9 +28,7 @@ class HomeController extends GetxController {
 
   List<TaskModel> get filteredTasks {
     final list = tasks.toList();
-    if (filter.value == TaskFilter.priority) {
-      list.sort((a, b) => b.priority.compareTo(a.priority));
-    }
+    list.sort((a, b) => b.priority.compareTo(a.priority));
     return list;
   }
 
@@ -44,8 +42,8 @@ class HomeController extends GetxController {
     loading.value = true;
     dailyRhythmLoaded.value = false;
     await HiveService.init();
-    await _resetTasksIfNeeded();
     _loadDailyRhythm();
+    await _resetTasksIfNeeded();
     tasks.assignAll(HiveService.getTasks());
     dailyRhythmLoaded.value = true;
     loading.value = false;
@@ -74,12 +72,13 @@ class HomeController extends GetxController {
     );
     sleepTime.value = sleep;
     wakeTime.value = wake;
+    await _resetTasksIfNeeded();
+    tasks.assignAll(HiveService.getTasks());
   }
 
   Future<void> _resetTasksIfNeeded() async {
-    final today = DateTime.now();
-    final todayKey = _dateKey(today);
-    if (ThemeService.lastDailyResetDate == todayKey) {
+    final resetKey = _dateKey(DateTime.now());
+    if (ThemeService.lastDailyResetDate == resetKey) {
       return;
     }
 
@@ -90,7 +89,7 @@ class HomeController extends GetxController {
       }
     }
 
-    await ThemeService.saveLastDailyResetDate(todayKey);
+    await ThemeService.saveLastDailyResetDate(resetKey);
   }
 
   String formatTimeLabel(TimeOfDay? time) {

@@ -106,6 +106,21 @@ class AppSideDrawer extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             ListTile(
+              leading: Icon(Icons.menu_book_rounded, color: iconPalette.tasks),
+              title: Text(
+                'bookshelf_title'.tr,
+                style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
+              ),
+              selected: currentRoute == AppRoutes.books,
+              selectedColor: iconPalette.tasks,
+              selectedTileColor: selectedTileColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              onTap: () => _goTo(AppRoutes.books),
+            ),
+            const SizedBox(height: 4),
+            ListTile(
               leading: Icon(
                 Icons.shopping_bag_rounded,
                 color: iconPalette.shopping,

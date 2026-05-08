@@ -280,13 +280,14 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
   }
 
   Color _statusColor(String statusKey) {
+    final theme = Get.theme;
     switch (statusKey) {
       case 'periodic_status_late':
-        return const Color(0xFFB91C1C);
+        return theme.semanticPalette.danger;
       case 'periodic_status_soon':
-        return const Color(0xFFD97706);
+        return theme.semanticPalette.warning;
       default:
-        return const Color(0xFF0F766E);
+        return theme.semanticPalette.success;
     }
   }
 
@@ -303,7 +304,7 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
     final Color accent = iconPalette.periodic;
     final Color addIconColor = currentTheme == AppThemePreset.carbonBlue
         ? pageBackground
-        : Colors.white;
+        : theme.semanticPalette.onAccent;
     final Color subtitleColor = colorScheme.onSurface.withValues(
       alpha: isDark ? 0.78 : 0.68,
     );
@@ -507,7 +508,7 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                                   icon: const Icon(
                                     Icons.delete_outline_rounded,
                                   ),
-                                  color: const Color(0xFFB91C1C),
+                                  color: theme.semanticPalette.danger,
                                 ),
                               ],
                             ),
@@ -538,7 +539,8 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                                 onPressed: () => controller.markDoneToday(item),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: accent,
-                                  foregroundColor: Colors.white,
+                                  foregroundColor:
+                                      theme.semanticPalette.onAccent,
                                 ),
                                 icon: const Icon(Icons.check_circle_rounded),
                                 label: Text('periodic_mark_done'.tr),

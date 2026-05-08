@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/books/books_binding.dart';
+import '../modules/books/books_view.dart';
 import '../modules/home/home_binding.dart';
 import '../modules/home/home_view.dart';
 import '../modules/launch/launch_binding.dart';
@@ -31,6 +33,12 @@ class AppPages {
       page: () => const HomeView(),
       binding: HomeBinding(),
       transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: AppRoutes.books,
+      page: () => const BooksView(),
+      binding: BooksBinding(),
+      transition: Transition.leftToRight,
     ),
     GetPage(
       name: AppRoutes.shoppingList,

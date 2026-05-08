@@ -36,102 +36,119 @@ class LaunchView extends GetView<LaunchController> {
                 ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: theme.cardColor.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: colorScheme.secondary.withValues(
-                        alpha: isDark ? 0.28 : 0.12,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.lock_rounded,
-                        size: 18,
-                        color: colorScheme.onSurface,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'local_storage_info'.tr,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: colorScheme.onSurface,
-                            fontWeight: FontWeight.w800,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: IntrinsicHeight(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: theme.cardColor.withValues(alpha: 0.92),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: colorScheme.secondary.withValues(
+                                alpha: isDark ? 0.28 : 0.12,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.lock_rounded,
+                                size: 18,
+                                color: colorScheme.onSurface,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'local_storage_info'.tr,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: colorScheme.onSurface,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 20),
+                        const Spacer(),
+                        Text(
+                          'launch_title'.tr,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'launch_subtitle'.tr,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge?.copyWith(color: subtitleColor),
+                        ),
+                        const SizedBox(height: 28),
+                        _LaunchCard(
+                          isDark: isDark,
+                          icon: Icons.checklist_rounded,
+                          title: 'home_title'.tr,
+                          subtitle: 'launch_tasks_desc'.tr,
+                          accent: iconPalette.tasks,
+                          onTap: controller.goToTasks,
+                        ),
+                        const SizedBox(height: 14),
+                        _LaunchCard(
+                          isDark: isDark,
+                          icon: Icons.menu_book_rounded,
+                          title: 'bookshelf_title'.tr,
+                          subtitle: 'launch_books_desc'.tr,
+                          accent: iconPalette.tasks,
+                          onTap: controller.goToBooks,
+                        ),
+                        const SizedBox(height: 14),
+                        _LaunchCard(
+                          isDark: isDark,
+                          icon: Icons.shopping_bag_rounded,
+                          title: 'shopping_list'.tr,
+                          subtitle: 'launch_shopping_desc'.tr,
+                          accent: iconPalette.shopping,
+                          onTap: controller.goToShoppingList,
+                        ),
+                        const SizedBox(height: 14),
+                        _LaunchCard(
+                          isDark: isDark,
+                          icon: Icons.autorenew_rounded,
+                          title: 'periodic_tracking'.tr,
+                          subtitle: 'launch_periodic_desc'.tr,
+                          accent: iconPalette.periodic,
+                          onTap: controller.goToPeriodicTracking,
+                        ),
+                        const SizedBox(height: 14),
+                        _LaunchCard(
+                          isDark: isDark,
+                          icon: Icons.settings_rounded,
+                          title: 'settings_title'.tr,
+                          subtitle: 'launch_settings_desc'.tr,
+                          accent: iconPalette.settings,
+                          onTap: controller.goToSettings,
+                        ),
+                        const Spacer(),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                const Spacer(),
-                Text(
-                  'launch_title'.tr,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'launch_subtitle'.tr,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(color: subtitleColor),
-                ),
-                const SizedBox(height: 28),
-                _LaunchCard(
-                  isDark: isDark,
-                  icon: Icons.checklist_rounded,
-                  title: 'home_title'.tr,
-                  subtitle: 'launch_tasks_desc'.tr,
-                  accent: iconPalette.tasks,
-                  onTap: controller.goToTasks,
-                ),
-                const SizedBox(height: 14),
-                _LaunchCard(
-                  isDark: isDark,
-                  icon: Icons.shopping_bag_rounded,
-                  title: 'shopping_list'.tr,
-                  subtitle: 'launch_shopping_desc'.tr,
-                  accent: iconPalette.shopping,
-                  onTap: controller.goToShoppingList,
-                ),
-                const SizedBox(height: 14),
-                _LaunchCard(
-                  isDark: isDark,
-                  icon: Icons.autorenew_rounded,
-                  title: 'periodic_tracking'.tr,
-                  subtitle: 'launch_periodic_desc'.tr,
-                  accent: iconPalette.periodic,
-                  onTap: controller.goToPeriodicTracking,
-                ),
-                const SizedBox(height: 14),
-                _LaunchCard(
-                  isDark: isDark,
-                  icon: Icons.settings_rounded,
-                  title: 'settings_title'.tr,
-                  subtitle: 'launch_settings_desc'.tr,
-                  accent: iconPalette.settings,
-                  onTap: controller.goToSettings,
-                ),
-                const Spacer(),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),

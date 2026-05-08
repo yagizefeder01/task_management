@@ -10,7 +10,6 @@ class ShoppingListView extends GetView<ShoppingListController> {
   const ShoppingListView({super.key});
 
   static const TextStyle _dialogDangerStyle = TextStyle(
-    color: Colors.white,
     fontWeight: FontWeight.w700,
   );
 
@@ -19,9 +18,49 @@ class ShoppingListView extends GetView<ShoppingListController> {
     fontWeight: FontWeight.w700,
   );
 
+  double _estimateListCardHeight(
+    Map<String, dynamic> list,
+    List<Map<String, dynamic>> items,
+  ) {
+    final title = list['title'] as String? ?? '';
+    final previewCount = items.length > 4 ? 4 : items.length;
+    final extraTitleLines = (title.length / 18).floor();
+
+    return 132 + (previewCount * 52) + (extraTitleLines * 20);
+  }
+
+  List<List<({Map<String, dynamic> list, List<Map<String, dynamic>> items})>>
+  _buildBalancedColumns() {
+    final leftColumn =
+        <({Map<String, dynamic> list, List<Map<String, dynamic>> items})>[];
+    final rightColumn =
+        <({Map<String, dynamic> list, List<Map<String, dynamic>> items})>[];
+    double leftHeight = 0;
+    double rightHeight = 0;
+
+    for (final list in controller.lists) {
+      final items = List<Map<String, dynamic>>.from(
+        (list['items'] as List<dynamic>? ?? const []).map(
+          (item) => Map<String, dynamic>.from(item as Map),
+        ),
+      );
+      final estimate = _estimateListCardHeight(list, items);
+
+      if (leftHeight <= rightHeight) {
+        leftColumn.add((list: list, items: items));
+        leftHeight += estimate;
+      } else {
+        rightColumn.add((list: list, items: items));
+        rightHeight += estimate;
+      }
+    }
+
+    return [leftColumn, rightColumn];
+  }
+
   Future<void> _showClearAllDialog(BuildContext context) async {
     final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
+    final semantics = theme.semanticPalette;
 
     await Get.dialog<void>(
       AlertDialog(
@@ -34,7 +73,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
             child: Text(
               'cancel'.tr,
               style: TextStyle(
-                color: isDark ? const Color(0xFFE5E7EB) : Colors.black,
+                color: semantics.contrastForeground,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -45,8 +84,8 @@ class ShoppingListView extends GetView<ShoppingListController> {
               await controller.clearAllItems();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFB91C1C),
-              foregroundColor: Colors.white,
+              backgroundColor: semantics.danger,
+              foregroundColor: semantics.onDanger,
             ),
             child: Text('shopping_clear_all'.tr, style: _dialogDangerStyle),
           ),
@@ -57,7 +96,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
 
   Future<void> _showClearCheckedDialog(BuildContext context) async {
     final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
+    final semantics = theme.semanticPalette;
     final iconPalette = AppThemes.iconPaletteFor(
       ThemeService.currentTheme.value,
     );
@@ -73,7 +112,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
             child: Text(
               'cancel'.tr,
               style: TextStyle(
-                color: isDark ? const Color(0xFFE5E7EB) : Colors.black,
+                color: semantics.contrastForeground,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -85,7 +124,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: iconPalette.shopping,
-              foregroundColor: Colors.white,
+              foregroundColor: semantics.onAccent,
             ),
             child: Text('shopping_clear_checked'.tr, style: _dialogDangerStyle),
           ),
@@ -105,11 +144,10 @@ class ShoppingListView extends GetView<ShoppingListController> {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).semanticPalette.transparent,
       builder: (context) {
         final theme = Theme.of(context);
-        final bool isDark = theme.brightness == Brightness.dark;
-        final colorScheme = theme.colorScheme;
+        final semantics = theme.semanticPalette;
         final iconPalette = AppThemes.iconPaletteFor(
           ThemeService.currentTheme.value,
         );
@@ -127,11 +165,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
             decoration: BoxDecoration(
               color: theme.cardColor,
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: colorScheme.secondary.withValues(
-                  alpha: isDark ? 0.28 : 0.12,
-                ),
-              ),
+              border: Border.all(color: theme.surfaceBorderColor),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -167,7 +201,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accent,
-                    foregroundColor: Colors.white,
+                    foregroundColor: semantics.onAccent,
                   ),
                   child: Text('shopping_add_item'.tr),
                 ),
@@ -182,91 +216,111 @@ class ShoppingListView extends GetView<ShoppingListController> {
   Future<void> _showAddListSheet(BuildContext context) async {
     final textController = TextEditingController();
 
-    await showModalBottomSheet<void>(
+    await showDialog<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
+      builder: (dialogContext) {
         final theme = Theme.of(context);
-        final bool isDark = theme.brightness == Brightness.dark;
-        final colorScheme = theme.colorScheme;
+        final semantics = theme.semanticPalette;
         final iconPalette = AppThemes.iconPaletteFor(
           ThemeService.currentTheme.value,
         );
         final accent = iconPalette.shopping;
 
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        return AlertDialog(
+          backgroundColor: theme.cardColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: theme.surfaceBorderColor),
           ),
-          child: Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: theme.cardColor,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: colorScheme.secondary.withValues(
-                  alpha: isDark ? 0.28 : 0.12,
+          titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+          contentPadding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          title: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(Icons.playlist_add_rounded, color: accent),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'shopping_add_list'.tr,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'shopping_list_name_hint'.tr,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.68),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: textController,
+                autofocus: true,
+                textInputAction: TextInputAction.go,
+                decoration: InputDecoration(
+                  hintText: 'shopping_list_name_hint'.tr,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                onSubmitted: (_) async {
+                  final listTitle = textController.text.trim();
+                  final saved = await controller.addList(
+                    listTitle,
+                    showSuccessSnackbar: false,
+                  );
+                  if (saved && dialogContext.mounted) {
+                    Navigator.of(dialogContext).pop();
+                  }
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                'cancel'.tr,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.78),
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'shopping_add_list'.tr,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: textController,
-                  autofocus: true,
-                  textInputAction: TextInputAction.go,
-                  decoration: InputDecoration(
-                    hintText: 'shopping_list_name_hint'.tr,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  onSubmitted: (_) async {
-                    final listTitle = textController.text.trim();
-                    final saved = await controller.addList(
-                      listTitle,
-                      showSuccessSnackbar: false,
-                    );
-                    if (saved && context.mounted) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    final listTitle = textController.text.trim();
-                    final saved = await controller.addList(
-                      listTitle,
-                      showSuccessSnackbar: false,
-                    );
-                    if (saved && context.mounted) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accent,
-                    foregroundColor: Colors.white,
-                  ),
-                  icon: const Icon(Icons.playlist_add_rounded),
-                  label: Text('shopping_add_list'.tr),
-                ),
-              ],
+            ElevatedButton.icon(
+              onPressed: () async {
+                final listTitle = textController.text.trim();
+                final saved = await controller.addList(
+                  listTitle,
+                  showSuccessSnackbar: false,
+                );
+                if (saved && dialogContext.mounted) {
+                  Navigator.of(dialogContext).pop();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: accent,
+                foregroundColor: semantics.onAccent,
+              ),
+              icon: const Icon(Icons.playlist_add_rounded),
+              label: Text('shopping_add_list'.tr),
             ),
-          ),
+          ],
         );
       },
     );
@@ -277,32 +331,33 @@ class ShoppingListView extends GetView<ShoppingListController> {
     Map<String, dynamic> list,
   ) async {
     final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
+    final semantics = theme.semanticPalette;
 
-    await Get.dialog<void>(
-      AlertDialog(
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: theme.cardColor,
         title: Text('shopping_delete_list_title'.tr),
         content: Text('${'shopping_delete_list_body'.tr} ${list['title']}'),
         actions: [
           TextButton(
-            onPressed: Get.back,
+            onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(
               'cancel'.tr,
               style: TextStyle(
-                color: isDark ? const Color(0xFFE5E7EB) : Colors.black,
+                color: semantics.contrastForeground,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
           ElevatedButton(
             onPressed: () async {
-              Get.back<void>();
+              Navigator.of(dialogContext).pop();
               await controller.removeList(list);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFB91C1C),
-              foregroundColor: Colors.white,
+              backgroundColor: semantics.danger,
+              foregroundColor: semantics.onDanger,
             ),
             child: Text('delete'.tr, style: _dialogDangerStyle),
           ),
@@ -702,7 +757,6 @@ class ShoppingListView extends GetView<ShoppingListController> {
       alpha: isDark ? 0.78 : 0.68,
     );
     final Color accent = iconPalette.shopping;
-    final double cardWidth = (MediaQuery.of(context).size.width - 44) / 2;
 
     return Scaffold(
       drawer: const AppSideDrawer(),
@@ -715,8 +769,10 @@ class ShoppingListView extends GetView<ShoppingListController> {
       body: Container(
         color: pageBackground,
         child: SafeArea(
-          child: Obx(
-            () => ListView(
+          child: Obx(() {
+            final listColumns = _buildBalancedColumns();
+
+            return ListView(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
               children: [
                 Container(
@@ -824,34 +880,63 @@ class ShoppingListView extends GetView<ShoppingListController> {
                     ),
                   )
                 else
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: controller.lists
-                        .map((list) {
-                          final items = List<Map<String, dynamic>>.from(
-                            (list['items'] as List<dynamic>? ?? const []).map(
-                              (item) => Map<String, dynamic>.from(item as Map),
-                            ),
-                          );
-
-                          return SizedBox(
-                            width: cardWidth,
-                            child: _ShoppingListCard(
-                              list: list,
-                              items: items,
-                              isDark: isDark,
-                              onTap: () => _showListDetailsSheet(context, list),
-                              onDelete: () =>
-                                  _showDeleteListDialog(context, list),
-                            ),
-                          );
-                        })
-                        .toList(growable: false),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: listColumns[0]
+                              .map(
+                                (entry) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: _ShoppingListCard(
+                                    list: entry.list,
+                                    items: entry.items,
+                                    isDark: isDark,
+                                    onTap: () => _showListDetailsSheet(
+                                      context,
+                                      entry.list,
+                                    ),
+                                    onDelete: () => _showDeleteListDialog(
+                                      context,
+                                      entry.list,
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(growable: false),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          children: listColumns[1]
+                              .map(
+                                (entry) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: _ShoppingListCard(
+                                    list: entry.list,
+                                    items: entry.items,
+                                    isDark: isDark,
+                                    onTap: () => _showListDetailsSheet(
+                                      context,
+                                      entry.list,
+                                    ),
+                                    onDelete: () => _showDeleteListDialog(
+                                      context,
+                                      entry.list,
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(growable: false),
+                        ),
+                      ),
+                    ],
                   ),
               ],
-            ),
-          ),
+            );
+          }),
         ),
       ),
     );

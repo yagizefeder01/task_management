@@ -14,13 +14,14 @@ class AppDatePickerSheet {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
     final currentTheme = ThemeService.currentTheme.value;
+    final semantics = theme.semanticPalette;
     DateTime selectedDate = _dateOnly(initialDate);
 
     return showModalBottomSheet<DateTime>(
       context: context,
       isScrollControlled: true,
-      barrierColor: Colors.transparent,
-      backgroundColor: Colors.transparent,
+      barrierColor: semantics.transparent,
+      backgroundColor: semantics.transparent,
       builder: (context) {
         final mediaQuery = MediaQuery.of(context);
         final maxSheetHeight = (mediaQuery.size.height * 0.82).clamp(
@@ -33,14 +34,11 @@ class AppDatePickerSheet {
           child: StatefulBuilder(
             builder: (context, setState) {
               final theme = Theme.of(context);
-              final Color surfaceColor = isDark
-                  ? const Color(0xFF111827)
-                  : Colors.white;
-              final Color mutedTextColor = isDark
-                  ? const Color(0xFFCBD5E1)
-                  : const Color(0xFF475569);
+              final semantics = theme.semanticPalette;
+              final Color surfaceColor = theme.cardColor;
+              final Color mutedTextColor = semantics.mutedForeground;
               final Color accentColor = switch (currentTheme) {
-                AppThemePreset.royalIvory => const Color(0xFF16A34A),
+                AppThemePreset.royalIvory => theme.colorScheme.primary,
                 AppThemePreset.midnightBlack => AppThemes.iconPaletteFor(
                   currentTheme,
                 ).tasks,
@@ -60,7 +58,7 @@ class AppDatePickerSheet {
               final Color accentForeground = useDarkAccentForeground
                   ? (theme.appBarTheme.backgroundColor ??
                         theme.scaffoldBackgroundColor)
-                  : Colors.white;
+                  : semantics.onAccent;
               final Color selectedPanelBackground =
                   currentTheme == AppThemePreset.midnightBlack
                   ? accentColor.withValues(alpha: 0.18)
@@ -91,12 +89,7 @@ class AppDatePickerSheet {
                 AppThemePreset.matteBlack => accentColor,
                 AppThemePreset.carbonBlue => accentForeground,
               };
-              final Color calendarSurface = switch (currentTheme) {
-                AppThemePreset.royalIvory => const Color(0xFFF8FAFC),
-                AppThemePreset.midnightBlack => const Color(0xFF09090B),
-                AppThemePreset.matteBlack => const Color(0xFF0F172A),
-                AppThemePreset.carbonBlue => const Color(0xFF0F172A),
-              };
+              final Color calendarSurface = semantics.softSurface;
               final Color headerIconBackground = switch (currentTheme) {
                 AppThemePreset.royalIvory => accentColor.withValues(
                   alpha: 0.10,
@@ -125,6 +118,7 @@ class AppDatePickerSheet {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(30),
                   ),
+                  border: Border.all(color: theme.surfaceBorderColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -134,9 +128,7 @@ class AppDatePickerSheet {
                         width: 42,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFD6D3D1),
+                          color: semantics.sheetHandle,
                           borderRadius: BorderRadius.circular(999),
                         ),
                       ),
@@ -247,12 +239,10 @@ class AppDatePickerSheet {
                               primary: accentColor,
                               onPrimary: accentForeground,
                               surface: calendarSurface,
-                              onSurface: isDark
-                                  ? const Color(0xFFE5E7EB)
-                                  : const Color(0xFF111827),
+                              onSurface: semantics.contrastForeground,
                             ),
                             datePickerTheme: DatePickerThemeData(
-                              backgroundColor: Colors.transparent,
+                              backgroundColor: semantics.transparent,
                               dayForegroundColor:
                                   WidgetStateProperty.resolveWith<Color?>((
                                     states,
@@ -260,9 +250,7 @@ class AppDatePickerSheet {
                                     if (states.contains(WidgetState.selected)) {
                                       return accentForeground;
                                     }
-                                    return isDark
-                                        ? const Color(0xFFE5E7EB)
-                                        : const Color(0xFF111827);
+                                    return semantics.contrastForeground;
                                   }),
                               dayBackgroundColor:
                                   WidgetStateProperty.resolveWith<Color?>((
@@ -271,7 +259,7 @@ class AppDatePickerSheet {
                                     if (states.contains(WidgetState.selected)) {
                                       return accentColor;
                                     }
-                                    return Colors.transparent;
+                                    return semantics.transparent;
                                   }),
                               todayForegroundColor:
                                   WidgetStateProperty.resolveWith<Color?>((
@@ -324,16 +312,10 @@ class AppDatePickerSheet {
                           child: OutlinedButton.icon(
                             onPressed: () => Navigator.of(context).pop(),
                             style: OutlinedButton.styleFrom(
-                              backgroundColor: isDark
-                                  ? const Color(0xFF0F172A)
-                                  : const Color(0xFFF8FAFC),
-                              foregroundColor: isDark
-                                  ? const Color(0xFFE5E7EB)
-                                  : const Color(0xFF111827),
+                              backgroundColor: semantics.softSurface,
+                              foregroundColor: semantics.contrastForeground,
                               side: BorderSide(
-                                color: isDark
-                                    ? const Color(0xFF334155)
-                                    : const Color(0xFFE2E8F0),
+                                color: semantics.softSurfaceBorder,
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               shape: RoundedRectangleBorder(

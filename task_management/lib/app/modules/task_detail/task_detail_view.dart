@@ -9,14 +9,7 @@ class TaskDetailView extends GetView<TaskDetailController> {
   const TaskDetailView({super.key});
 
   Color _priorityColor(bool isDark, int value) {
-    switch (value) {
-      case 2:
-        return isDark ? const Color(0xFFFBBF24) : const Color(0xFFB54708);
-      case 3:
-        return isDark ? const Color(0xFFF87171) : const Color(0xFFB42318);
-      default:
-        return isDark ? const Color(0xFF34D399) : const Color(0xFF027A48);
-    }
+    return Get.theme.taskPalette.toneForPriority(value).accent;
   }
 
   String _dateText(DateTime value) {
@@ -43,6 +36,7 @@ class TaskDetailView extends GetView<TaskDetailController> {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
     final currentTheme = ThemeService.currentTheme.value;
+    final bool isRoyalIvory = currentTheme == AppThemePreset.royalIvory;
     final bool isGoldenNight = currentTheme == AppThemePreset.midnightBlack;
     final colorScheme = theme.colorScheme;
     final accentPalette = AppThemes.iconPaletteFor(currentTheme);
@@ -55,27 +49,28 @@ class TaskDetailView extends GetView<TaskDetailController> {
     );
     final Color saveButtonColor = isGoldenNight
         ? accentPalette.tasks
-        : const Color(0xFF16A34A);
+        : isRoyalIvory
+        ? const Color(0xFF9C6B38)
+        : theme.semanticPalette.success;
     final Color saveButtonForeground = isGoldenNight
         ? (theme.appBarTheme.backgroundColor ?? pageBackground)
-        : Colors.white;
-    final Color titleFieldFillColor = isGoldenNight
-        ? const Color(0xFF241B08)
-        : isDark
-        ? const Color(0xFF0F172A)
-        : const Color(0xFFF8F1E7);
+        : isRoyalIvory
+        ? const Color(0xFFFFFBF5)
+        : theme.semanticPalette.onAccent;
+    final Color titleFieldFillColor = theme.semanticPalette.softSurface;
     final Color titleFieldHintColor = isGoldenNight
         ? accentPalette.tasks.withValues(alpha: 0.72)
         : subtitleColor;
     final Color? titleFieldIdleIconColor = isGoldenNight
         ? accentPalette.tasks
+        : isRoyalIvory
+        ? const Color(0xFF8A5A12)
         : null;
     final Color titleCheckForeground = isGoldenNight
-        ? (theme.appBarTheme.backgroundColor ?? Colors.black)
-        : const Color(0xFF16A34A);
-    final Color titleCheckBackground = isGoldenNight
-        ? accentPalette.tasks
-        : Colors.transparent;
+        ? (theme.appBarTheme.backgroundColor ?? pageBackground)
+        : isRoyalIvory
+        ? const Color(0xFF9C6B38)
+        : theme.semanticPalette.success;
     final Color headerIconBackground = switch (currentTheme) {
       AppThemePreset.royalIvory => const Color(0xFFF1E3CF),
       AppThemePreset.midnightBlack => accentPalette.tasks,
@@ -113,10 +108,8 @@ class TaskDetailView extends GetView<TaskDetailController> {
         actions: controller.isEditing
             ? [
                 IconButton(
-                  icon: const Icon(
-                    Icons.delete_forever_outlined,
-                    color: Color(0xFF8B0000),
-                  ),
+                  icon: const Icon(Icons.delete_forever_outlined),
+                  color: theme.semanticPalette.danger,
                   onPressed: controller.removeTask,
                 ),
               ]
@@ -146,16 +139,12 @@ class TaskDetailView extends GetView<TaskDetailController> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: canSave
                     ? saveButtonColor
-                    : (isDark
-                          ? const Color(0xFF1F2937)
-                          : const Color(0xFFCBD5E1)),
-                disabledBackgroundColor: isDark
-                    ? const Color(0xFF1F2937)
-                    : const Color(0xFFCBD5E1),
+                    : theme.semanticPalette.softSurface,
+                disabledBackgroundColor: theme.semanticPalette.softSurface,
                 foregroundColor: saveButtonForeground,
                 disabledForegroundColor: isDark
-                    ? const Color(0xFF94A3B8)
-                    : const Color(0xFF64748B),
+                    ? theme.semanticPalette.mutedForeground
+                    : theme.semanticPalette.mutedForeground,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
                 ),
@@ -198,7 +187,9 @@ class TaskDetailView extends GetView<TaskDetailController> {
                   border: Border.all(color: borderColor),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(isDark ? 0.16 : 0.05),
+                      color: theme.semanticPalette.overlayShadow.withOpacity(
+                        isDark ? 0.16 : 0.05,
+                      ),
                       blurRadius: 18,
                       offset: const Offset(0, 8),
                     ),
@@ -297,18 +288,10 @@ class TaskDetailView extends GetView<TaskDetailController> {
                                   padding: const EdgeInsets.only(right: 12),
                                   child: Center(
                                     widthFactor: 1,
-                                    child: Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        color: titleCheckBackground,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Icon(
-                                        Icons.check_rounded,
-                                        size: 20,
-                                        color: titleCheckForeground,
-                                      ),
+                                    child: Icon(
+                                      Icons.check_rounded,
+                                      size: 20,
+                                      color: titleCheckForeground,
                                     ),
                                   ),
                                 ),
@@ -493,33 +476,39 @@ class TaskDetailView extends GetView<TaskDetailController> {
                         ),
                       ),
                       const SizedBox(height: 14),
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
+                      Row(
                         children: [
-                          _QuickDateChip(
-                            label: 'Bugün',
-                            selected: _isQuickDateSelected(
-                              controller.dueDate.value,
-                              0,
+                          Expanded(
+                            child: _QuickDateChip(
+                              label: 'Bugün',
+                              selected: _isQuickDateSelected(
+                                controller.dueDate.value,
+                                0,
+                              ),
+                              onTap: () => controller.setDueDateFromNow(0),
                             ),
-                            onTap: () => controller.setDueDateFromNow(0),
                           ),
-                          _QuickDateChip(
-                            label: 'Yarın',
-                            selected: _isQuickDateSelected(
-                              controller.dueDate.value,
-                              1,
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _QuickDateChip(
+                              label: 'Yarın',
+                              selected: _isQuickDateSelected(
+                                controller.dueDate.value,
+                                1,
+                              ),
+                              onTap: () => controller.setDueDateFromNow(1),
                             ),
-                            onTap: () => controller.setDueDateFromNow(1),
                           ),
-                          _QuickDateChip(
-                            label: '3 gün sonra',
-                            selected: _isQuickDateSelected(
-                              controller.dueDate.value,
-                              3,
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: _QuickDateChip(
+                              label: '3 gün sonra',
+                              selected: _isQuickDateSelected(
+                                controller.dueDate.value,
+                                3,
+                              ),
+                              onTap: () => controller.setDueDateFromNow(3),
                             ),
-                            onTap: () => controller.setDueDateFromNow(3),
                           ),
                         ],
                       ),
@@ -628,42 +617,66 @@ class _QuickDateChip extends StatelessWidget {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
     final currentTheme = ThemeService.currentTheme.value;
+    final bool isRoyalIvory = currentTheme == AppThemePreset.royalIvory;
     final bool isGoldenNight = currentTheme == AppThemePreset.midnightBlack;
     final accent = AppThemes.iconPaletteFor(currentTheme).tasks;
     final foreground = isGoldenNight
         ? (theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor)
+        : isRoyalIvory
+        ? const Color(0xFFFFFBF5)
         : Colors.white;
     final unselectedBackground = isGoldenNight
         ? accent.withValues(alpha: 0.20)
+        : isRoyalIvory
+        ? const Color(0xFFF7EFE2)
         : isDark
         ? const Color(0xFF1F2937)
         : const Color(0xFFF5EEDF);
     final unselectedBorder = isGoldenNight
         ? accent
+        : isRoyalIvory
+        ? const Color(0xFFE0CCAE)
         : isDark
         ? const Color(0xFF334155)
         : const Color(0xFFDDC8A3);
     final unselectedForeground = isGoldenNight
         ? accent
+        : isRoyalIvory
+        ? const Color(0xFF8A5A12)
         : isDark
         ? const Color(0xFFE5E7EB)
         : const Color(0xFF85541A);
+    final selectedColor = isGoldenNight
+        ? accent
+        : isRoyalIvory
+        ? const Color(0xFF9C6B38)
+        : const Color(0xFF16A34A);
 
-    return ActionChip(
-      onPressed: onTap,
-      backgroundColor: selected
-          ? (isGoldenNight ? accent : const Color(0xFF16A34A))
-          : unselectedBackground,
-      side: BorderSide(
-        color: selected
-            ? (isGoldenNight ? accent : const Color(0xFF16A34A))
-            : unselectedBorder,
-      ),
-      label: Text(
-        label,
-        style: TextStyle(
-          color: selected ? foreground : unselectedForeground,
-          fontWeight: FontWeight.w700,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: Ink(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+          decoration: BoxDecoration(
+            color: selected ? selectedColor : unselectedBackground,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: selected ? selectedColor : unselectedBorder,
+            ),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: selected ? foreground : unselectedForeground,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
       ),
     );
