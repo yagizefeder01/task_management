@@ -8,6 +8,7 @@ class AppColors {
   static const Color surface = Color(0xFFF5F7FF);
   static const Color background = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFFFFFFF);
+  static const Color stormGray = Color(0xFF475569);
   static const Color accent = Color(0xFFFFB74D);
   static const Color success = Color(0xFF2ECC71);
   static const Color warning = Color(0xFFF39C12);
