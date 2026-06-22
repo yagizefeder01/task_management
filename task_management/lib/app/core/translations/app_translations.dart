@@ -98,6 +98,8 @@ class AppTranslations extends Translations {
           'Yağ değişimi, muayene, filtre değişimi gibi düzenli işleri ekleyebilirsin.',
       'periodic_empty_action': 'İlk kaydı oluştur',
       'periodic_add_record': 'Takip Ekle',
+      'periodic_edit_record': 'Kaydı Düzenle',
+      'periodic_save_changes': 'Kaydet',
       'periodic_title_hint': 'Örn: Yağ değişimi',
       'periodic_title_hint_vehicle': 'Örn: Yağ değişimi',
       'periodic_title_hint_home': 'Örn: Kira',
@@ -131,6 +133,30 @@ class AppTranslations extends Translations {
       'periodic_saved': 'Periyodik takip kaydedildi',
       'periodic_updated': 'Kayıt bugün için güncellendi',
       'periodic_deleted': 'Takip kaydı silindi',
+      'periodic_notification_title': 'Periyodik bakım yaklaşıyor',
+      'periodic_notification_body':
+          '@title için planladığın tarih bugün. Hatırlatmak istedik!',
+      'sleep_reminder_title': 'Uyku vakti yaklaşıyor 🌙',
+      'sleep_reminder_body_1':
+          'Yatmana 15 dakika kaldı 🌙 Telefonu bir kenara bırakıp biraz nefes almaya ne dersin?',
+      'sleep_reminder_body_2':
+          'Gözlerin yorgun mu? 😴 15 dakika sonra yastığa kavuşman gerek, yavaşça hazırlan.',
+      'sleep_reminder_body_3':
+          'Bugün seninle gurur duyuyorum ✨ 15 dakika sonra uyumaya söz vermiştik.',
+      'sleep_reminder_body_4':
+          'Az kaldı! ⏳ 15 dakika sonra yatakta olmak için ekranı kapat.',
+      'sleep_reminder_body_5':
+          'Bir bardak su, biraz esneme ve uyku 💧 15 dakikan var, hadi bakalım.',
+      'sleep_reminder_body_6':
+          'Telefon yarına da var, sen şimdi dinlen 📵 15 dakika sonra uyumalısın.',
+      'sleep_reminder_body_7':
+          'Günün yorgunluğunu yatakta bırak 🛏️ Uyku saatine 15 dakika kaldı.',
+      'sleep_reminder_body_8':
+          'Yarınki halin sana minnettar kalacak 🙏 15 dakika içinde uyumayı dene.',
+      'sleep_reminder_body_9':
+          'Hayallerin seni bekliyor 🌌 Uykuna 15 dakika kaldı, hazır mısın?',
+      'sleep_reminder_body_10':
+          'Bugün de iyi iş çıkardın 🌟 15 dakika içinde gözlerini kapat.',
       'coming_soon': 'Yakında',
       'shopping_list_title': 'Yeni bir listeye hazırsın',
       'shopping_list_empty_title': 'Henüz liste yok',
@@ -311,6 +337,8 @@ class AppTranslations extends Translations {
           'Add repeatable routines like oil changes, inspections, or filter replacements.',
       'periodic_empty_action': 'Create the first record',
       'periodic_add_record': 'Add Tracking',
+      'periodic_edit_record': 'Edit Tracking',
+      'periodic_save_changes': 'Save',
       'periodic_title_hint': 'Ex: Oil change',
       'periodic_title_hint_vehicle': 'Ex: Oil change',
       'periodic_title_hint_home': 'Ex: Rent',
@@ -345,6 +373,30 @@ class AppTranslations extends Translations {
       'periodic_saved': 'Periodic tracking saved',
       'periodic_updated': 'Record updated for today',
       'periodic_deleted': 'Tracking record deleted',
+      'periodic_notification_title': 'Periodic maintenance coming up',
+      'periodic_notification_body':
+          'The date you scheduled for @title is today. Just a reminder!',
+      'sleep_reminder_title': 'Time to wind down 🌙',
+      'sleep_reminder_body_1':
+          'Bedtime is 15 minutes away 🌙 How about putting the phone down and taking a deep breath?',
+      'sleep_reminder_body_2':
+          'Are your eyes tired? 😴 You should be in bed in 15 minutes, start winding down.',
+      'sleep_reminder_body_3':
+          'Proud of you today ✨ You promised to sleep in 15 minutes, remember?',
+      'sleep_reminder_body_4':
+          'Almost there! ⏳ Switch off the screen, bedtime in 15 minutes.',
+      'sleep_reminder_body_5':
+          'A glass of water, a stretch, then sleep 💧 You have 15 minutes.',
+      'sleep_reminder_body_6':
+          'The phone will still be here tomorrow 📵 Rest now, 15 minutes left.',
+      'sleep_reminder_body_7':
+          'Leave the tiredness in bed 🛏️ Bedtime in 15 minutes.',
+      'sleep_reminder_body_8':
+          'Future-you will thank present-you 🙏 Try to sleep in 15 minutes.',
+      'sleep_reminder_body_9':
+          'Your dreams are waiting 🌌 15 minutes to sleep, ready?',
+      'sleep_reminder_body_10':
+          'Great job today 🌟 Close your eyes in 15 minutes.',
       'coming_soon': 'Coming Soon',
       'shopping_list_title': 'Ready for a new list',
       'shopping_list_empty_title': 'No lists yet',
@@ -513,6 +565,8 @@ class AppTranslations extends Translations {
       'periodic_empty_body': '添加重复例程，如换油、检查或更换过滤器。',
       'periodic_empty_action': '创建第一条记录',
       'periodic_add_record': '添加跟踪',
+      'periodic_edit_record': '编辑跟踪',
+      'periodic_save_changes': '保存',
       'periodic_title_hint': '例：换油',
       'periodic_title_hint_vehicle': '例：换油',
       'periodic_title_hint_home': '例：租金',
@@ -546,6 +600,19 @@ class AppTranslations extends Translations {
       'periodic_saved': '定期跟踪已保存',
       'periodic_updated': '今天的记录已更新',
       'periodic_deleted': '跟踪记录已删除',
+      'periodic_notification_title': '周期保养即将到期',
+      'periodic_notification_body': '你为 @title 计划的日期就是今天。',
+      'sleep_reminder_title': '该准备休息了 🌙',
+      'sleep_reminder_body_1': '距离睡觉还有15分钟 🌙 放下手机，深呼吸一下吧。',
+      'sleep_reminder_body_2': '眼睛累了吗？😴 15分钟后该躺在床上，慢慢放松。',
+      'sleep_reminder_body_3': '今天的你很棒 ✨ 15分钟后说好要入睡的，记得吗？',
+      'sleep_reminder_body_4': '快了！⏳ 关掉屏幕，15分钟后上床。',
+      'sleep_reminder_body_5': '一杯水、一次拉伸，然后睡觉 💧 你有15分钟。',
+      'sleep_reminder_body_6': '手机明天还在 📵 现在好好休息，还有15分钟。',
+      'sleep_reminder_body_7': '把今天的疲惫留在床上 🛏️ 距离睡觉还有15分钟。',
+      'sleep_reminder_body_8': '明天的你会感谢现在的你 🙏 15分钟后尝试入睡。',
+      'sleep_reminder_body_9': '梦在等你 🌌 还有15分钟到睡觉时间，准备好了吗？',
+      'sleep_reminder_body_10': '今天辛苦了 🌟 15分钟后闭上眼睛吧。',
       'coming_soon': '即将推出',
       'shopping_list_title': '准备好新列表了',
       'shopping_list_empty_title': '还没有列表',
@@ -715,6 +782,8 @@ class AppTranslations extends Translations {
           'तेल परिवर्तन, निरीक्षण, या फ़िल्टर प्रतिस्थापन जैसी दोहराए जाने वाली दिनचर्या जोड़ें।',
       'periodic_empty_action': 'पहला रिकॉर्ड बनाएं',
       'periodic_add_record': 'ट्रैकिंग जोड़ें',
+      'periodic_edit_record': 'ट्रैकिंग संपादित करें',
+      'periodic_save_changes': 'सहेजें',
       'periodic_title_hint': 'पूर्व: तेल परिवर्तन',
       'periodic_title_hint_vehicle': 'पूर्व: तेल परिवर्तन',
       'periodic_title_hint_home': 'पूर्व: किराया',
@@ -748,6 +817,29 @@ class AppTranslations extends Translations {
       'periodic_saved': 'आवधिक ट्रैकिंग सहेजी गई',
       'periodic_updated': 'आज के लिए रिकॉर्ड अपडेट किया गया',
       'periodic_deleted': 'ट्रैकिंग रिकॉर्ड हटाया गया',
+      'periodic_notification_title': 'आवधिक रखरखाव नजदीक है',
+      'periodic_notification_body': '@title के लिए आपकी निर्धारित तारीख आज है।',
+      'sleep_reminder_title': 'सोने का वक्त करीब है 🌙',
+      'sleep_reminder_body_1':
+          'सोने में 15 मिनट बाकी हैं 🌙 फोन एक तरफ रखो और गहरी सांस लो।',
+      'sleep_reminder_body_2':
+          'आँखें थक गई हैं? 😴 15 मिनट बाद बिस्तर पर होना चाहिए, धीरे-धीरे आराम करो।',
+      'sleep_reminder_body_3':
+          'आज तुम पर गर्व है ✨ 15 मिनट में सोने का वादा किया था, याद है?',
+      'sleep_reminder_body_4':
+          'बस थोड़ा और! ⏳ स्क्रीन बंद करो, 15 मिनट में सो जाओ।',
+      'sleep_reminder_body_5':
+          'एक गिलास पानी, थोड़ा खिंचाव और नींद 💧 तुम्हारे पास 15 मिनट हैं।',
+      'sleep_reminder_body_6':
+          'फोन कल भी रहेगा 📵 अभी आराम करो, 15 मिनट बचे हैं।',
+      'sleep_reminder_body_7':
+          'आज की थकान बिस्तर पर छोड़ दो 🛏️ सोने में 15 मिनट बाकी।',
+      'sleep_reminder_body_8':
+          'कल का तुम आभारी रहेगा 🙏 15 मिनट में सोने की कोशिश करो।',
+      'sleep_reminder_body_9':
+          'तुम्हारे सपने इंतजार कर रहे हैं 🌌 15 मिनट और, तैयार हो?',
+      'sleep_reminder_body_10':
+          'आज बहुत अच्छा किया 🌟 15 मिनट में आँखें बंद कर दो।',
       'coming_soon': 'जल्द आ रहा है',
       'shopping_list_title': 'एक नई सूची के लिए तैयार हैं',
       'shopping_list_empty_title': 'अभी तक कोई सूची नहीं',
@@ -929,6 +1021,8 @@ class AppTranslations extends Translations {
           'Añade rutinas repetibles como cambios de aceite, inspecciones o reemplazos de filtros.',
       'periodic_empty_action': 'Crear el primer registro',
       'periodic_add_record': 'Agregar seguimiento',
+      'periodic_edit_record': 'Editar seguimiento',
+      'periodic_save_changes': 'Guardar',
       'periodic_title_hint': 'Ej: Cambio de aceite',
       'periodic_title_hint_vehicle': 'Ej: Cambio de aceite',
       'periodic_title_hint_home': 'Ej: Alquiler',
@@ -963,6 +1057,30 @@ class AppTranslations extends Translations {
       'periodic_saved': 'Seguimiento periódico guardado',
       'periodic_updated': 'Registro actualizado para hoy',
       'periodic_deleted': 'Registro de seguimiento eliminado',
+      'periodic_notification_title': 'Mantenimiento periódico cercano',
+      'periodic_notification_body':
+          'La fecha que programaste para @title es hoy. ¡Te lo recordamos!',
+      'sleep_reminder_title': 'Hora de relajarse 🌙',
+      'sleep_reminder_body_1':
+          'Faltan 15 minutos para dormir 🌙 ¿Y si dejas el móvil y respiras hondo?',
+      'sleep_reminder_body_2':
+          '¿Ojos cansados? 😴 En 15 minutos a la cama, ve relajándote.',
+      'sleep_reminder_body_3':
+          'Hoy estoy orgulloso de ti ✨ Prometiste dormir en 15 minutos, ¿recuerdas?',
+      'sleep_reminder_body_4':
+          '¡Ya casi! ⏳ Apaga la pantalla, a dormir en 15 minutos.',
+      'sleep_reminder_body_5':
+          'Un vaso de agua, un estiramiento y a dormir 💧 Tienes 15 minutos.',
+      'sleep_reminder_body_6':
+          'El móvil seguirá aquí mañana 📵 Descansa ahora, quedan 15 minutos.',
+      'sleep_reminder_body_7':
+          'Deja el cansancio de hoy en la cama 🛏️ 15 minutos para dormir.',
+      'sleep_reminder_body_8':
+          'El tú de mañana te lo agradecerá 🙏 Intenta dormir en 15 minutos.',
+      'sleep_reminder_body_9':
+          'Tus sueños te esperan 🌌 15 minutos para dormir, ¿listo?',
+      'sleep_reminder_body_10':
+          'Buen trabajo hoy 🌟 Cierra los ojos en 15 minutos.',
       'coming_soon': 'Próximamente',
       'shopping_list_title': 'Listo para una nueva lista',
       'shopping_list_empty_title': 'Sin listas aún',
@@ -1145,6 +1263,8 @@ class AppTranslations extends Translations {
           'Adicione rotinas repetíveis como trocas de óleo, inspeções ou substituições de filtros.',
       'periodic_empty_action': 'Criar o primeiro registro',
       'periodic_add_record': 'Adicionar rastreamento',
+      'periodic_edit_record': 'Editar rastreamento',
+      'periodic_save_changes': 'Salvar',
       'periodic_title_hint': 'Ex: Troca de óleo',
       'periodic_title_hint_vehicle': 'Ex: Troca de óleo',
       'periodic_title_hint_home': 'Ex: Aluguel',
@@ -1180,6 +1300,30 @@ class AppTranslations extends Translations {
       'periodic_saved': 'Rastreamento periódico salvo',
       'periodic_updated': 'Registro atualizado para hoje',
       'periodic_deleted': 'Registro de rastreamento excluído',
+      'periodic_notification_title': 'Manutenção periódica se aproximando',
+      'periodic_notification_body':
+          'A data que você programou para @title é hoje. Só um lembrete!',
+      'sleep_reminder_title': 'Hora de desacelerar 🌙',
+      'sleep_reminder_body_1':
+          'Faltam 15 minutos para dormir 🌙 Que tal largar o celular e respirar fundo?',
+      'sleep_reminder_body_2':
+          'Olhos cansados? 😴 Em 15 minutos na cama, vai desacelerando.',
+      'sleep_reminder_body_3':
+          'Tô orgulhoso de você hoje ✨ Você prometeu dormir em 15 minutos, lembra?',
+      'sleep_reminder_body_4':
+          'Quase lá! ⏳ Desliga a tela, dormir em 15 minutos.',
+      'sleep_reminder_body_5':
+          'Um copo de água, um alongamento e dormir 💧 Você tem 15 minutos.',
+      'sleep_reminder_body_6':
+          'O celular vai estar aí amanhã 📵 Descansa agora, faltam 15 minutos.',
+      'sleep_reminder_body_7':
+          'Deixa o cansaço de hoje na cama 🛏️ 15 minutos para dormir.',
+      'sleep_reminder_body_8':
+          'O você de amanhã vai agradecer 🙏 Tenta dormir em 15 minutos.',
+      'sleep_reminder_body_9':
+          'Seus sonhos estão esperando 🌌 15 minutos para dormir, pronto?',
+      'sleep_reminder_body_10':
+          'Mandou bem hoje 🌟 Feche os olhos em 15 minutos.',
       'coming_soon': 'Em breve',
       'shopping_list_title': 'Pronto para uma nova lista',
       'shopping_list_empty_title': 'Nenhuma lista ainda',
@@ -1364,6 +1508,8 @@ class AppTranslations extends Translations {
           'Ajoutez des routines répétables comme les changements d\'huile, les inspections ou les remplacements de filtres.',
       'periodic_empty_action': 'Créer le premier enregistrement',
       'periodic_add_record': 'Ajouter un suivi',
+      'periodic_edit_record': 'Modifier le suivi',
+      'periodic_save_changes': 'Enregistrer',
       'periodic_title_hint': 'Ex : Changement d\'huile',
       'periodic_title_hint_vehicle': 'Ex : Changement d\'huile',
       'periodic_title_hint_home': 'Ex : Loyer',
@@ -1401,6 +1547,30 @@ class AppTranslations extends Translations {
       'periodic_saved': 'Suivi périodique enregistré',
       'periodic_updated': 'Enregistrement mis à jour pour aujourd\'hui',
       'periodic_deleted': 'Enregistrement de suivi supprimé',
+      'periodic_notification_title': 'Maintenance périodique à venir',
+      'periodic_notification_body':
+          'La date que vous avez planifiée pour @title est aujourd’hui.',
+      'sleep_reminder_title': 'L’heure de souffler 🌙',
+      'sleep_reminder_body_1':
+          'Le coucher dans 15 minutes 🌙 Et si tu posais le téléphone et respirais un bon coup?',
+      'sleep_reminder_body_2':
+          'Les yeux fatigués? 😴 Au lit dans 15 minutes, commence à ralentir.',
+      'sleep_reminder_body_3':
+          'Fier de toi aujourd’hui ✨ Tu avais promis de dormir dans 15 minutes, tu te souviens?',
+      'sleep_reminder_body_4':
+          'Presque! ⏳ Éteins l’écran, au lit dans 15 minutes.',
+      'sleep_reminder_body_5':
+          'Un verre d’eau, un étirement et dodo 💧 Tu as 15 minutes.',
+      'sleep_reminder_body_6':
+          'Le téléphone sera encore là demain 📵 Repose-toi, il reste 15 minutes.',
+      'sleep_reminder_body_7':
+          'Laisse la fatigue d’aujourd’hui au lit 🛏️ 15 minutes avant de dormir.',
+      'sleep_reminder_body_8':
+          'Le toi de demain te remerciera 🙏 Essaie de dormir dans 15 minutes.',
+      'sleep_reminder_body_9':
+          'Tes rêves t’attendent 🌌 15 minutes avant le sommeil, prêt?',
+      'sleep_reminder_body_10':
+          'Belle journée 🌟 Ferme les yeux dans 15 minutes.',
       'coming_soon': 'À venir',
       'shopping_list_title': 'Prêt pour une nouvelle liste',
       'shopping_list_empty_title': 'Pas encore de listes',
@@ -1583,6 +1753,8 @@ class AppTranslations extends Translations {
           'أضف روتينات قابلة للتكرار مثل تغييرات الزيت والفحوصات أو استبدالات الفلاتر.',
       'periodic_empty_action': 'إنشاء السجل الأول',
       'periodic_add_record': 'إضافة تتبع',
+      'periodic_edit_record': 'تعديل التتبع',
+      'periodic_save_changes': 'حفظ',
       'periodic_title_hint': 'مثال: تغيير الزيت',
       'periodic_title_hint_vehicle': 'مثال: تغيير الزيت',
       'periodic_title_hint_home': 'مثال: الإيجار',
@@ -1616,6 +1788,25 @@ class AppTranslations extends Translations {
       'periodic_saved': 'تم حفظ التتبع الدوري',
       'periodic_updated': 'تم تحديث السجل لهذا اليوم',
       'periodic_deleted': 'تم حذف سجل التتبع',
+      'periodic_notification_title': 'صيانة دورية تقترب',
+      'periodic_notification_body':
+          'التاريخ الذي حددته لـ @title هو اليوم. تذكير!',
+      'sleep_reminder_title': 'حان وقت الاسترخاء 🌙',
+      'sleep_reminder_body_1':
+          'تبقى 15 دقيقة على النوم 🌙 ما رأيك في إبعاد الهاتف وأخذ نفس عميق؟',
+      'sleep_reminder_body_2':
+          'هل عيناك متعبتان؟ 😴 يجب أن تكون في السرير بعد 15 دقيقة، استرخِ ببطء.',
+      'sleep_reminder_body_3':
+          'فخور بك اليوم ✨ وعدت بالنوم بعد 15 دقيقة، تذكر؟',
+      'sleep_reminder_body_4': 'اقتربنا! ⏳ أطفئ الشاشة، النوم بعد 15 دقيقة.',
+      'sleep_reminder_body_5': 'كوب ماء، تمدد بسيط والنوم 💧 لديك 15 دقيقة.',
+      'sleep_reminder_body_6':
+          'الهاتف سيبقى غدًا 📵 استرح الآن، تبقت 15 دقيقة.',
+      'sleep_reminder_body_7':
+          'اترك تعب اليوم في السرير 🛏️ 15 دقيقة على النوم.',
+      'sleep_reminder_body_8': 'أنت الغد سيشكرك 🙏 حاول النوم خلال 15 دقيقة.',
+      'sleep_reminder_body_9': 'أحلامك بانتظارك 🌌 15 دقيقة على النوم، جاهز؟',
+      'sleep_reminder_body_10': 'أحسنت اليوم 🌟 أغمض عينيك خلال 15 دقيقة.',
       'coming_soon': 'قادم قريباً',
       'shopping_list_title': 'مستعد لقائمة جديدة',
       'shopping_list_empty_title': 'لا توجد قوائم بعد',
@@ -1796,6 +1987,8 @@ class AppTranslations extends Translations {
           'Добавьте повторяющиеся процедуры, такие как замена масла, проверки или замена фильтров.',
       'periodic_empty_action': 'Создать первую запись',
       'periodic_add_record': 'Добавить отслеживание',
+      'periodic_edit_record': 'Изменить отслеживание',
+      'periodic_save_changes': 'Сохранить',
       'periodic_title_hint': 'Пример: замена масла',
       'periodic_title_hint_vehicle': 'Пример: замена масла',
       'periodic_title_hint_home': 'Пример: аренда',
@@ -1832,6 +2025,28 @@ class AppTranslations extends Translations {
       'periodic_saved': 'Периодическое отслеживание сохранено',
       'periodic_updated': 'Запись обновлена на сегодня',
       'periodic_deleted': 'Запись отслеживания удалена',
+      'periodic_notification_title': 'Приближается плановое обслуживание',
+      'periodic_notification_body':
+          'Дата, которую вы запланировали для @title, — сегодня.',
+      'sleep_reminder_title': 'Пора замедлиться 🌙',
+      'sleep_reminder_body_1':
+          'До сна 15 минут 🌙 Может, отложишь телефон и сделаешь глубокий вдох?',
+      'sleep_reminder_body_2':
+          'Глаза устали? 😴 Через 15 минут в кровать, начинай расслабляться.',
+      'sleep_reminder_body_3':
+          'Горжусь тобой сегодня ✨ Ты обещал спать через 15 минут, помнишь?',
+      'sleep_reminder_body_4': 'Почти! ⏳ Выключи экран, спать через 15 минут.',
+      'sleep_reminder_body_5':
+          'Стакан воды, потягивание и сон 💧 У тебя 15 минут.',
+      'sleep_reminder_body_6':
+          'Телефон будет тут и завтра 📵 Отдохни, осталось 15 минут.',
+      'sleep_reminder_body_7':
+          'Оставь усталость дня в постели 🛏️ 15 минут до сна.',
+      'sleep_reminder_body_8':
+          'Завтрашний ты скажет спасибо 🙏 Попробуй уснуть через 15 минут.',
+      'sleep_reminder_body_9': 'Твои мечты ждут 🌌 15 минут до сна, готов?',
+      'sleep_reminder_body_10':
+          'Отличная работа сегодня 🌟 Закрой глаза через 15 минут.',
       'coming_soon': 'Скоро',
       'shopping_list_title': 'Готовы к новому списку',
       'shopping_list_empty_title': 'Пока нет списков',
@@ -2015,6 +2230,8 @@ class AppTranslations extends Translations {
           'Fügen Sie wiederholbare Routinen wie Ölwechsel, Inspektionen oder Filterwechsel hinzu.',
       'periodic_empty_action': 'Ersten Datensatz erstellen',
       'periodic_add_record': 'Nachverfolgung hinzufügen',
+      'periodic_edit_record': 'Nachverfolgung bearbeiten',
+      'periodic_save_changes': 'Speichern',
       'periodic_title_hint': 'Beispiel: Ölwechsel',
       'periodic_title_hint_vehicle': 'Beispiel: Ölwechsel',
       'periodic_title_hint_home': 'Beispiel: Miete',
@@ -2051,6 +2268,30 @@ class AppTranslations extends Translations {
       'periodic_saved': 'Periodische Nachverfolgung gespeichert',
       'periodic_updated': 'Datensatz für heute aktualisiert',
       'periodic_deleted': 'Nachverfolgungsdatensatz gelöscht',
+      'periodic_notification_title': 'Periodische Wartung steht an',
+      'periodic_notification_body':
+          'Das Datum, das du für @title geplant hast, ist heute.',
+      'sleep_reminder_title': 'Zeit zum Runterkommen 🌙',
+      'sleep_reminder_body_1':
+          'Schlafenszeit in 15 Minuten 🌙 Wie wär’s, das Handy wegzulegen und tief durchzuatmen?',
+      'sleep_reminder_body_2':
+          'Augen müde? 😴 In 15 Minuten ins Bett, fang an, runterzukommen.',
+      'sleep_reminder_body_3':
+          'Stolz auf dich heute ✨ Du hast versprochen, in 15 Minuten zu schlafen, weißt du noch?',
+      'sleep_reminder_body_4':
+          'Fast geschafft! ⏳ Bildschirm aus, in 15 Minuten ins Bett.',
+      'sleep_reminder_body_5':
+          'Ein Glas Wasser, Strecken und Schlaf 💧 Du hast 15 Minuten.',
+      'sleep_reminder_body_6':
+          'Das Handy ist morgen auch noch da 📵 Ruh dich aus, 15 Minuten noch.',
+      'sleep_reminder_body_7':
+          'Lass die Müdigkeit von heute im Bett 🛏️ 15 Minuten bis zum Schlaf.',
+      'sleep_reminder_body_8':
+          'Das Morgen-Ich wird dankbar sein 🙏 Versuch in 15 Minuten zu schlafen.',
+      'sleep_reminder_body_9':
+          'Deine Träume warten 🌌 15 Minuten bis zum Schlaf, bereit?',
+      'sleep_reminder_body_10':
+          'Heute richtig stark 🌟 Augen zu in 15 Minuten.',
       'coming_soon': 'Kommt bald',
       'shopping_list_title': 'Bereit für eine neue Liste',
       'shopping_list_empty_title': 'Noch keine Listen',

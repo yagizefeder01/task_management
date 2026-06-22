@@ -518,7 +518,7 @@ class AppThemes {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark ? darkSoftFill : primary.withOpacity(0.05),
+        fillColor: isDark ? darkSoftFill : primary.withValues(alpha: 0.05),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -526,7 +526,7 @@ class AppThemes {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: isDark ? darkBorder : primary.withOpacity(0.08),
+            color: isDark ? darkBorder : primary.withValues(alpha: 0.08),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -550,11 +550,11 @@ class AppThemes {
         disabledElevation: 0,
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: isDark ? darkTint : primary.withOpacity(0.08),
+        backgroundColor: isDark ? darkTint : primary.withValues(alpha: 0.08),
         selectedColor: accent,
         disabledColor: isDark
             ? secondary.withValues(alpha: 0.08)
-            : Colors.black.withOpacity(0.04),
+            : Colors.black.withValues(alpha: 0.04),
         secondarySelectedColor: accent,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         labelStyle: TextStyle(color: onSurface, fontWeight: FontWeight.w600),
@@ -564,7 +564,7 @@ class AppThemes {
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
-      dividerColor: isDark ? darkBorder : primary.withOpacity(0.10),
+      dividerColor: isDark ? darkBorder : primary.withValues(alpha: 0.10),
       splashColor: isDark ? secondary.withValues(alpha: 0.12) : null,
       highlightColor: isDark ? secondary.withValues(alpha: 0.08) : null,
     );

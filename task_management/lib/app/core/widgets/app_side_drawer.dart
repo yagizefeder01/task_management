@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../theme/app_themes.dart';
 import '../../data/services/theme_service.dart';
@@ -30,6 +31,11 @@ class AppSideDrawer extends StatelessWidget {
     final Color borderColor = theme.surfaceBorderColor;
     final Color iconAccent = iconPalette.navigation;
     final Color textColor = colorScheme.onSurface;
+    final Color brandColor = Color.lerp(
+      iconPalette.navigation,
+      colorScheme.onSurface,
+      isDark ? 0.22 : 0.42,
+    )!;
     final Color selectedTileColor = colorScheme.secondary.withValues(
       alpha: isDark ? 0.18 : 0.10,
     );
@@ -47,31 +53,30 @@ class AppSideDrawer extends StatelessWidget {
                 color: headerBackground,
                 border: Border(bottom: BorderSide(color: borderColor)),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: colorScheme.secondary.withValues(
-                        alpha: isDark ? 0.18 : 0.10,
+              child: SizedBox(
+                width: double.infinity,
+                child: Text(
+                  'app_name'.tr,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cormorantGaramond(
+                    textStyle: Theme.of(context).textTheme.headlineSmall,
+                    fontSize: 31,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.2,
+                    color: brandColor,
+                    shadows: [
+                      Shadow(
+                        color: brandColor.withValues(
+                          alpha: isDark ? 0.34 : 0.18,
+                        ),
+                        blurRadius: 16,
+                        offset: const Offset(0, 2),
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.dashboard_customize_rounded,
-                      color: iconPalette.settings,
-                    ),
+                    ],
                   ),
-                  const SizedBox(height: 14),
-                  Text(
-                    'app_name'.tr,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             const SizedBox(height: 12),

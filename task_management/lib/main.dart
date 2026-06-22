@@ -5,7 +5,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'app/core/translations/app_translations.dart';
 import 'app/data/models/task_model.dart';
+import 'app/data/services/ad_service.dart';
 import 'app/data/services/daily_task_reset_service.dart';
+import 'app/data/services/notification_service.dart';
 import 'app/data/services/theme_service.dart';
 import 'app/routes/app_pages.dart';
 
@@ -15,6 +17,8 @@ Future<void> main() async {
   Hive.registerAdapter(TaskModelAdapter());
 
   await ThemeService.init();
+  await NotificationService.init();
+  await AdService.initialize();
   await DailyTaskResetService.ensureResetIfNeeded();
 
   runApp(const ClutchFlowApp());

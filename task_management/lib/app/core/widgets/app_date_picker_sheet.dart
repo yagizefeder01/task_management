@@ -49,9 +49,6 @@ class AppDatePickerSheet {
                   currentTheme,
                 ).tasks,
               };
-              final Color themeIconColor = AppThemes.iconPaletteFor(
-                currentTheme,
-              ).tasks;
               final bool useDarkAccentForeground =
                   currentTheme == AppThemePreset.midnightBlack ||
                   currentTheme == AppThemePreset.carbonBlue;

@@ -187,8 +187,8 @@ class TaskDetailView extends GetView<TaskDetailController> {
                   border: Border.all(color: borderColor),
                   boxShadow: [
                     BoxShadow(
-                      color: theme.semanticPalette.overlayShadow.withOpacity(
-                        isDark ? 0.16 : 0.05,
+                      color: theme.semanticPalette.overlayShadow.withValues(
+                        alpha: isDark ? 0.16 : 0.05,
                       ),
                       blurRadius: 18,
                       offset: const Offset(0, 8),
@@ -549,10 +549,12 @@ class _PriorityOptionCard extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: selected ? color.withOpacity(0.12) : Colors.transparent,
+            color: selected
+                ? color.withValues(alpha: 0.12)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: selected ? color : color.withOpacity(0.25),
+              color: selected ? color : color.withValues(alpha: 0.25),
               width: selected ? 1.6 : 1,
             ),
           ),

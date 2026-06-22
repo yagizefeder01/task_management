@@ -13,11 +13,6 @@ class ShoppingListView extends GetView<ShoppingListController> {
     fontWeight: FontWeight.w700,
   );
 
-  static const TextStyle _bottomActionTextStyle = TextStyle(
-    fontSize: 13,
-    fontWeight: FontWeight.w700,
-  );
-
   double _estimateListCardHeight(
     Map<String, dynamic> list,
     List<Map<String, dynamic>> items,
@@ -133,88 +128,9 @@ class ShoppingListView extends GetView<ShoppingListController> {
     );
   }
 
-  Future<void> _showAddItemSheet(BuildContext context) async {
-    if (controller.selectedList == null) {
-      await _showAddListSheet(context);
-      return;
-    }
-
-    final textController = TextEditingController();
-
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).semanticPalette.transparent,
-      builder: (context) {
-        final theme = Theme.of(context);
-        final semantics = theme.semanticPalette;
-        final iconPalette = AppThemes.iconPaletteFor(
-          ThemeService.currentTheme.value,
-        );
-        final accent = iconPalette.shopping;
-
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: theme.cardColor,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: theme.surfaceBorderColor),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'shopping_add_item'.tr,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: textController,
-                  autofocus: true,
-                  textInputAction: TextInputAction.go,
-                  decoration: InputDecoration(
-                    hintText: 'shopping_item_hint'.tr,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  onSubmitted: (_) async {
-                    final saved = await controller.addItem(textController.text);
-                    if (saved && context.mounted) Get.back();
-                  },
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () async {
-                    final saved = await controller.addItem(textController.text);
-                    if (saved && context.mounted) Get.back();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accent,
-                    foregroundColor: semantics.onAccent,
-                  ),
-                  child: Text('shopping_add_item'.tr),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Future<void> _showAddListSheet(BuildContext context) async {
     final textController = TextEditingController();
+    Map<String, dynamic>? createdList;
 
     await showDialog<void>(
       context: context,
@@ -285,6 +201,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
                     showSuccessSnackbar: false,
                   );
                   if (saved && dialogContext.mounted) {
+                    createdList = controller.selectedList;
                     Navigator.of(dialogContext).pop();
                   }
                 },
@@ -310,6 +227,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
                   showSuccessSnackbar: false,
                 );
                 if (saved && dialogContext.mounted) {
+                  createdList = controller.selectedList;
                   Navigator.of(dialogContext).pop();
                 }
               },
@@ -324,6 +242,10 @@ class ShoppingListView extends GetView<ShoppingListController> {
         );
       },
     );
+
+    if (createdList != null && context.mounted) {
+      await _showListDetailsSheet(context, createdList!);
+    }
   }
 
   Future<void> _showDeleteListDialog(
@@ -372,6 +294,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
   ) async {
     controller.selectList(list['key']);
     final textController = TextEditingController();
+    final inputFocusNode = FocusNode();
 
     await showModalBottomSheet<void>(
       context: parentContext,
@@ -525,6 +448,8 @@ class ShoppingListView extends GetView<ShoppingListController> {
                                   const SizedBox(height: 16),
                                   TextField(
                                     controller: textController,
+                                    focusNode: inputFocusNode,
+                                    autofocus: true,
                                     textInputAction: TextInputAction.go,
                                     decoration: InputDecoration(
                                       hintText: 'shopping_item_hint'.tr,
@@ -546,6 +471,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
                                       );
                                       if (saved) {
                                         textController.clear();
+                                        inputFocusNode.requestFocus();
                                       }
                                     },
                                   ),
@@ -641,7 +567,7 @@ class ShoppingListView extends GetView<ShoppingListController> {
                                           : ListView.separated(
                                               shrinkWrap: true,
                                               itemCount: items.length,
-                                              separatorBuilder: (_, __) =>
+                                              separatorBuilder: (_, _) =>
                                                   const SizedBox(height: 8),
                                               itemBuilder: (context, index) {
                                                 final item = items[index];
@@ -740,6 +666,8 @@ class ShoppingListView extends GetView<ShoppingListController> {
         );
       },
     );
+
+    inputFocusNode.dispose();
   }
 
   @override
@@ -993,7 +921,7 @@ class _ShoppingListCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.10 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.10 : 0.05),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),

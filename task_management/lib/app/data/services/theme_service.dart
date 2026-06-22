@@ -44,9 +44,10 @@ class ThemeService {
   static ThemeData get activeThemeData =>
       AppThemes.themeFor(currentTheme.value);
 
-  static void changeTheme(AppThemePreset preset) {
+  static Future<void> changeTheme(AppThemePreset preset) async {
     currentTheme.value = preset;
-    _settingsBoxInstance.put(_themeKey, preset.name);
+    await _settingsBoxInstance.put(_themeKey, preset.name);
+    await _settingsBoxInstance.flush();
     Get.changeTheme(activeThemeData);
     Get.changeThemeMode(
       activeThemeData.brightness == Brightness.dark
@@ -55,9 +56,10 @@ class ThemeService {
     );
   }
 
-  static void changeLocale(Locale locale) {
+  static Future<void> changeLocale(Locale locale) async {
     currentLocale = locale;
-    _settingsBoxInstance.put(_localeKey, locale.languageCode);
+    await _settingsBoxInstance.put(_localeKey, locale.languageCode);
+    await _settingsBoxInstance.flush();
     Get.updateLocale(locale);
   }
 

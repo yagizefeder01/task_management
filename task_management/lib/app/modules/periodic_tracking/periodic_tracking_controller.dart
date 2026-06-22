@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
 import '../../core/widgets/app_snackbar.dart';
+import '../../data/services/notification_service.dart';
 
 class PeriodicTrackingController extends GetxController {
   static const String _boxName = 'periodic_tracking_items';
@@ -77,7 +78,7 @@ class PeriodicTrackingController extends GetxController {
     );
 
     _box ??= await Hive.openBox(_boxName);
-    await _box!.add({
+    final int newKey = await _box!.add({
       'title': trimmedTitle,
       'category': category,
       'note': trimmedNote,
@@ -87,6 +88,59 @@ class PeriodicTrackingController extends GetxController {
       'lastDoneAt': lastDoneAt.toIso8601String(),
       'nextDueAt': nextDueAt.toIso8601String(),
     });
+
+    await NotificationService.ensurePermissions();
+    await _scheduleReminder(
+      key: newKey,
+      title: trimmedTitle,
+      nextDueAt: nextDueAt,
+    );
+
+    await loadItems();
+    AppSnackbar.showSuccess(trimmedTitle, 'periodic_saved'.tr);
+    return true;
+  }
+
+  Future<bool> updateItem({
+    required dynamic key,
+    required String title,
+    required String category,
+    required int intervalValue,
+    required String intervalUnit,
+    required DateTime lastDoneAt,
+    String note = '',
+  }) async {
+    final trimmedTitle = title.trim();
+    final trimmedNote = note.trim();
+
+    if (trimmedTitle.isEmpty || intervalValue <= 0) {
+      AppSnackbar.showError('periodic_tracking'.tr, 'periodic_add_error'.tr);
+      return false;
+    }
+
+    final nextDueAt = calculateNextDueAt(
+      lastDoneAt,
+      intervalValue,
+      intervalUnit,
+    );
+
+    _box ??= await Hive.openBox(_boxName);
+    await _box!.put(key, {
+      'title': trimmedTitle,
+      'category': category,
+      'note': trimmedNote,
+      'intervalValue': intervalValue,
+      'intervalUnit': intervalUnit,
+      'intervalMonths': intervalUnit == 'months' ? intervalValue : 1,
+      'lastDoneAt': lastDoneAt.toIso8601String(),
+      'nextDueAt': nextDueAt.toIso8601String(),
+    });
+
+    await _scheduleReminder(
+      key: key,
+      title: trimmedTitle,
+      nextDueAt: nextDueAt,
+    );
 
     await loadItems();
     AppSnackbar.showSuccess(trimmedTitle, 'periodic_saved'.tr);
@@ -117,20 +171,37 @@ class PeriodicTrackingController extends GetxController {
       'nextDueAt': nextDueAt.toIso8601String(),
     });
 
+    await _scheduleReminder(
+      key: item['key'],
+      title: item['title'] as String,
+      nextDueAt: nextDueAt,
+    );
+
     await loadItems();
     AppSnackbar.showSuccess(item['title'] as String, 'periodic_updated'.tr);
   }
 
   Future<void> removeItem(Map<String, dynamic> item) async {
+    final dynamic itemKey = item['key'];
+    if (itemKey == null) {
+      return;
+    }
+
     _box ??= await Hive.openBox(_boxName);
     final restoredItem = Map<String, dynamic>.from(item);
-    await _box!.delete(item['key']);
-    await loadItems();
+
+    items.removeWhere((e) => e['key'] == itemKey);
+    items.refresh();
+
+    await _box!.delete(itemKey);
+    await NotificationService.cancelPeriodicReminder(itemKey);
+
     AppSnackbar.showDelete(
       item['title'] as String,
       'periodic_deleted'.tr,
       onUndo: () async {
-        await _box!.put(restoredItem['key'], {
+        _box ??= await Hive.openBox(_boxName);
+        await _box!.put(itemKey, {
           'title': restoredItem['title'],
           'category': restoredItem['category'],
           'note': restoredItem['note'],
@@ -140,8 +211,31 @@ class PeriodicTrackingController extends GetxController {
           'lastDoneAt': restoredItem['lastDoneAt'],
           'nextDueAt': restoredItem['nextDueAt'],
         });
+        final restoredDue = DateTime.tryParse(
+          restoredItem['nextDueAt'] as String? ?? '',
+        );
+        if (restoredDue != null) {
+          await _scheduleReminder(
+            key: itemKey,
+            title: restoredItem['title'] as String,
+            nextDueAt: restoredDue,
+          );
+        }
         await loadItems();
       },
+    );
+  }
+
+  Future<void> _scheduleReminder({
+    required dynamic key,
+    required String title,
+    required DateTime nextDueAt,
+  }) async {
+    await NotificationService.schedulePeriodicReminder(
+      key: key,
+      title: 'periodic_notification_title'.tr,
+      body: 'periodic_notification_body'.trParams({'title': title}),
+      dueAt: nextDueAt,
     );
   }
 

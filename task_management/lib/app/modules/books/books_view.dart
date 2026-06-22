@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../core/theme/app_themes.dart';
 import '../../core/widgets/app_side_drawer.dart';
 import '../../data/models/book_model.dart';
+import '../../data/services/ad_service.dart';
 import '../../data/services/theme_service.dart';
 import 'books_controller.dart';
 
@@ -177,6 +178,7 @@ class BooksView extends GetView<BooksController> {
           );
           if (saved && sheetContext.mounted) {
             Navigator.of(sheetContext).pop();
+            await AdService.registerBookSaved();
           }
         }
 
@@ -545,11 +547,19 @@ class BooksView extends GetView<BooksController> {
                             ),
                             const SizedBox(width: 10),
                             Expanded(
-                              child: _BooksStatPill(
-                                label: 'books_daily_pace_title'.tr,
-                                value:
-                                    '${controller.dailyPages.value} ${'books_pages_unit'.tr}',
-                                accent: accent,
+                              child: Material(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(16),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(16),
+                                  onTap: () => _showDailyPaceDialog(context),
+                                  child: _BooksStatPill(
+                                    label: 'books_daily_pace_title'.tr,
+                                    value:
+                                        '${controller.dailyPages.value} ${'books_pages_unit'.tr}',
+                                    accent: accent,
+                                  ),
+                                ),
                               ),
                             ),
                           ],

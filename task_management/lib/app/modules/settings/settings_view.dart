@@ -7,6 +7,25 @@ import '../../core/theme/app_themes.dart';
 import '../../core/widgets/app_side_drawer.dart';
 import 'settings_controller.dart';
 
+Color _foregroundForBackground(Color background, ThemeData theme) {
+  return background.computeLuminance() > 0.56
+      ? theme.colorScheme.onSurface
+      : Colors.white;
+}
+
+Color _readableAccent(Color accent, ThemeData theme) {
+  if (accent.computeLuminance() > 0.62) {
+    return Color.alphaBlend(
+      Colors.black.withValues(
+        alpha: theme.brightness == Brightness.dark ? 0.24 : 0.42,
+      ),
+      accent,
+    );
+  }
+
+  return accent;
+}
+
 class SettingsView extends GetView<SettingsController> {
   const SettingsView({super.key});
 
@@ -156,14 +175,24 @@ class SettingsView extends GetView<SettingsController> {
       alpha: isDark ? 0.78 : 0.68,
     );
     final Color iconColor = iconPalette.settings;
-    final Color sleepButtonBackground =
-        currentTheme == AppThemePreset.carbonBlue
-        ? iconColor
-        : colorScheme.primary;
-    final Color sleepButtonForeground =
-        currentTheme == AppThemePreset.carbonBlue
-        ? pageBackground
-        : theme.semanticPalette.onAccent;
+    final bool useLegacySleepButtonColors =
+        currentTheme == AppThemePreset.royalIvory ||
+        currentTheme == AppThemePreset.carbonBlue;
+    final bool useBooksAccentSleepButtonColors =
+        currentTheme == AppThemePreset.midnightBlack ||
+        currentTheme == AppThemePreset.matteBlack;
+    final Color sleepButtonBackground = useLegacySleepButtonColors
+        ? (currentTheme == AppThemePreset.carbonBlue
+              ? iconColor
+              : colorScheme.primary)
+        : useBooksAccentSleepButtonColors
+        ? _readableAccent(iconPalette.tasks, theme)
+        : Color.alphaBlend(iconColor.withValues(alpha: 0.18), surfaceColor);
+    final Color sleepButtonForeground = useLegacySleepButtonColors
+        ? (currentTheme == AppThemePreset.carbonBlue
+              ? pageBackground
+              : theme.semanticPalette.onAccent)
+        : _foregroundForBackground(sleepButtonBackground, theme);
     final Color fieldFillColor =
         theme.inputDecorationTheme.fillColor ?? surfaceColor;
     final Color shadowColor =
@@ -331,6 +360,14 @@ class SettingsView extends GetView<SettingsController> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: sleepButtonBackground,
                             foregroundColor: sleepButtonForeground,
+                            elevation: 0,
+                            side:
+                                useLegacySleepButtonColors ||
+                                    useBooksAccentSleepButtonColors
+                                ? null
+                                : BorderSide(
+                                    color: iconColor.withValues(alpha: 0.24),
+                                  ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),

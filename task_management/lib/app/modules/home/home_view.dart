@@ -1109,7 +1109,7 @@ class _FocusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: backgroundColor ?? color.withOpacity(0.12),
+        color: backgroundColor ?? color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
         border: borderColor == null ? null : Border.all(color: borderColor!),
       ),

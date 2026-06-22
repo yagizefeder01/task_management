@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../core/theme/app_themes.dart';
 import '../../core/widgets/app_snackbar.dart';
+import '../../data/services/notification_service.dart';
 import '../../data/services/theme_service.dart';
 
 class SettingsController extends GetxController {
@@ -18,13 +19,13 @@ class SettingsController extends GetxController {
     wakeTime.value = _parseStoredTime(ThemeService.wakeTimeString);
   }
 
-  void changeTheme(AppThemePreset theme) {
-    ThemeService.changeTheme(theme);
+  Future<void> changeTheme(AppThemePreset theme) async {
+    await ThemeService.changeTheme(theme);
   }
 
-  void changeLocale(String? code) {
+  Future<void> changeLocale(String? code) async {
     if (code == null) return;
-    ThemeService.changeLocale(Locale(code));
+    await ThemeService.changeLocale(Locale(code));
     localeCode.value = code;
   }
 
@@ -40,6 +41,16 @@ class SettingsController extends GetxController {
       sleepTime: _formatStoredTime(currentSleep),
       wakeTime: _formatStoredTime(currentWake),
     );
+
+    await NotificationService.ensurePermissions();
+    final bodies = [for (var i = 1; i <= 10; i++) 'sleep_reminder_body_$i'.tr];
+    await NotificationService.scheduleSleepReminder(
+      sleepHour: currentSleep.hour,
+      sleepMinute: currentSleep.minute,
+      title: 'sleep_reminder_title'.tr,
+      bodies: bodies,
+    );
+
     AppSnackbar.showSuccess('settings_title'.tr, 'settings_sleep_saved'.tr);
   }
 

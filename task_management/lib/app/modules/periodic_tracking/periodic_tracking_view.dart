@@ -4,11 +4,20 @@ import 'package:get/get.dart';
 import '../../core/theme/app_themes.dart';
 import '../../core/widgets/app_date_picker_sheet.dart';
 import '../../core/widgets/app_side_drawer.dart';
+import '../../data/services/ad_service.dart';
 import '../../data/services/theme_service.dart';
 import 'periodic_tracking_controller.dart';
 
 class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
   const PeriodicTrackingView({super.key});
+
+  String _formatDisplayDate(BuildContext context, DateTime date) {
+    final localDate = date.toLocal();
+    final shortMonthDay = MaterialLocalizations.of(
+      context,
+    ).formatShortMonthDay(localDate);
+    return '$shortMonthDay ${localDate.year}';
+  }
 
   String _titleHint(String category) {
     switch (category) {
@@ -43,13 +52,37 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
     }
   }
 
-  Future<void> _showAddSheet(BuildContext context) async {
-    final titleController = TextEditingController();
-    final noteController = TextEditingController();
-    final intervalController = TextEditingController(text: '1');
-    final selectedCategory = 'vehicle'.obs;
-    final selectedIntervalUnit = 'months'.obs;
-    final selectedDate = DateTime.now().obs;
+  Future<void> _showAddSheet(
+    BuildContext context, {
+    Map<String, dynamic>? existing,
+  }) async {
+    final bool isEditing = existing != null;
+    final Map<String, dynamic> source = existing ?? const {};
+    final titleController = TextEditingController(
+      text: isEditing ? (source['title'] as String? ?? '') : '',
+    );
+    final noteController = TextEditingController(
+      text: isEditing ? (source['note'] as String? ?? '') : '',
+    );
+    final initialIntervalValue = isEditing
+        ? (source['intervalValue'] as int? ??
+              source['intervalMonths'] as int? ??
+              1)
+        : 1;
+    final intervalController = TextEditingController(
+      text: initialIntervalValue.toString(),
+    );
+    final selectedCategory =
+        (isEditing ? (source['category'] as String? ?? 'vehicle') : 'vehicle')
+            .obs;
+    final selectedIntervalUnit =
+        (isEditing ? (source['intervalUnit'] as String? ?? 'months') : 'months')
+            .obs;
+    final initialDate = isEditing
+        ? (DateTime.tryParse(source['lastDoneAt'] as String? ?? '') ??
+              DateTime.now())
+        : DateTime.now();
+    final selectedDate = initialDate.obs;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final iconPalette = AppThemes.iconPaletteFor(
@@ -65,7 +98,6 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        final bool isDark = Theme.of(context).brightness == Brightness.dark;
         final mediaQuery = MediaQuery.of(context);
         final maxSheetHeight =
             (mediaQuery.size.height - mediaQuery.viewInsets.bottom - 24).clamp(
@@ -108,7 +140,9 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'periodic_add_record'.tr,
+                      isEditing
+                          ? 'periodic_edit_record'.tr
+                          : 'periodic_add_record'.tr,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: sheetText,
                         fontWeight: FontWeight.w700,
@@ -129,7 +163,7 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                     const SizedBox(height: 12),
                     Obx(
                       () => DropdownButtonFormField<String>(
-                        value: selectedCategory.value,
+                        initialValue: selectedCategory.value,
                         decoration: InputDecoration(
                           labelText: 'periodic_category'.tr,
                           border: OutlineInputBorder(
@@ -178,7 +212,7 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                     const SizedBox(height: 12),
                     Obx(
                       () => DropdownButtonFormField<String>(
-                        value: selectedIntervalUnit.value,
+                        initialValue: selectedIntervalUnit.value,
                         decoration: InputDecoration(
                           labelText: 'periodic_interval_unit'.tr,
                           border: OutlineInputBorder(
@@ -215,7 +249,7 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                         ),
                         icon: const Icon(Icons.event_rounded),
                         label: Text(
-                          '${'periodic_last_done'.tr}: ${selectedDate.value.toLocal().toString().split(' ').first}',
+                          '${'periodic_last_done'.tr}: ${_formatDisplayDate(context, selectedDate.value)}',
                         ),
                       ),
                     ),
@@ -237,17 +271,39 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                       onPressed: () async {
                         FocusScope.of(context).unfocus();
 
-                        final saved = await controller.addItem(
-                          title: titleController.text,
-                          category: selectedCategory.value,
-                          intervalValue:
-                              int.tryParse(intervalController.text.trim()) ?? 0,
-                          intervalUnit: selectedIntervalUnit.value,
-                          lastDoneAt: selectedDate.value,
-                          note: noteController.text,
-                        );
-                        if (saved && context.mounted) {
-                          Get.back();
+                        final bool saved;
+                        if (isEditing) {
+                          saved = await controller.updateItem(
+                            key: source['key'],
+                            title: titleController.text,
+                            category: selectedCategory.value,
+                            intervalValue:
+                                int.tryParse(intervalController.text.trim()) ??
+                                0,
+                            intervalUnit: selectedIntervalUnit.value,
+                            lastDoneAt: selectedDate.value,
+                            note: noteController.text,
+                          );
+                        } else {
+                          saved = await controller.addItem(
+                            title: titleController.text,
+                            category: selectedCategory.value,
+                            intervalValue:
+                                int.tryParse(intervalController.text.trim()) ??
+                                0,
+                            intervalUnit: selectedIntervalUnit.value,
+                            lastDoneAt: selectedDate.value,
+                            note: noteController.text,
+                          );
+                        }
+                        if (!saved) {
+                          return;
+                        }
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                        }
+                        if (!isEditing) {
+                          await AdService.registerPeriodicItemCreated();
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -255,8 +311,14 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      icon: const Icon(Icons.add_task_rounded),
-                      label: Text('periodic_add_record'.tr),
+                      icon: Icon(
+                        isEditing ? Icons.save_rounded : Icons.add_task_rounded,
+                      ),
+                      label: Text(
+                        isEditing
+                            ? 'periodic_save_changes'.tr
+                            : 'periodic_add_record'.tr,
+                      ),
                     ),
                   ],
                 ),
@@ -271,9 +333,9 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
   IconData _categoryIcon(String category) {
     switch (category) {
       case 'home':
-        return Icons.home_repair_service_rounded;
+        return Icons.home_rounded;
       case 'hobby':
-        return Icons.sports_motorsports_rounded;
+        return Icons.interests_rounded;
       default:
         return Icons.directions_car_filled_rounded;
     }
@@ -440,9 +502,9 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                     );
 
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.only(bottom: 10),
                       child: Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.fromLTRB(14, 10, 8, 12),
                         decoration: BoxDecoration(
                           color: surfaceColor,
                           borderRadius: BorderRadius.circular(18),
@@ -454,18 +516,19 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                             Row(
                               children: [
                                 Container(
-                                  width: 42,
-                                  height: 42,
+                                  width: 36,
+                                  height: 36,
                                   decoration: BoxDecoration(
-                                    color: statusColor.withOpacity(0.12),
-                                    borderRadius: BorderRadius.circular(12),
+                                    color: statusColor.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
                                     _categoryIcon(item['category'] as String),
                                     color: statusColor,
+                                    size: 20,
                                   ),
                                 ),
-                                const SizedBox(width: 12),
+                                const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -475,19 +538,21 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                                         item['title'] as String,
                                         style: Theme.of(context)
                                             .textTheme
-                                            .titleMedium
+                                            .titleSmall
                                             ?.copyWith(
                                               fontWeight: FontWeight.w700,
                                             ),
                                       ),
-                                      const SizedBox(height: 4),
+                                      const SizedBox(height: 3),
                                       Container(
                                         padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 5,
+                                          horizontal: 8,
+                                          vertical: 3,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: statusColor.withOpacity(0.12),
+                                          color: statusColor.withValues(
+                                            alpha: 0.12,
+                                          ),
                                           borderRadius: BorderRadius.circular(
                                             999,
                                           ),
@@ -497,6 +562,7 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                                           style: TextStyle(
                                             color: statusColor,
                                             fontWeight: FontWeight.w700,
+                                            fontSize: 11,
                                           ),
                                         ),
                                       ),
@@ -504,35 +570,77 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                                   ),
                                 ),
                                 IconButton(
+                                  onPressed: () =>
+                                      _showAddSheet(context, existing: item),
+                                  icon: const Icon(
+                                    Icons.edit_outlined,
+                                    size: 20,
+                                  ),
+                                  color: accent,
+                                  tooltip: 'periodic_edit_record'.tr,
+                                  visualDensity: VisualDensity.compact,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(
+                                    minWidth: 36,
+                                    minHeight: 36,
+                                  ),
+                                ),
+                                IconButton(
                                   onPressed: () => controller.removeItem(item),
                                   icon: const Icon(
                                     Icons.delete_outline_rounded,
+                                    size: 20,
                                   ),
                                   color: theme.semanticPalette.danger,
+                                  visualDensity: VisualDensity.compact,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(
+                                    minWidth: 36,
+                                    minHeight: 36,
+                                  ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 14),
-                            Text(
-                              '${'periodic_last_done'.tr}: ${lastDone.toLocal().toString().split(' ').first}',
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${'periodic_next_due'.tr}: ${nextDue.toLocal().toString().split(' ').first}',
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${'periodic_interval'.tr}: ${controller.intervalSummary(item)}',
-                            ),
-                            if ((item['note'] as String).isNotEmpty) ...[
-                              const SizedBox(height: 8),
-                              Text(
-                                item['note'] as String,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(color: subtitleColor),
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${'periodic_last_done'.tr}: ${_formatDisplayDate(context, lastDone)}',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${'periodic_next_due'.tr}: ${nextDue.toLocal().toString().split(' ').first}',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${'periodic_interval'.tr}: ${controller.intervalSummary(item)}',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                  ),
+                                  if ((item['note'] as String).isNotEmpty) ...[
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      item['note'] as String,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(color: subtitleColor),
+                                    ),
+                                  ],
+                                ],
                               ),
-                            ],
-                            const SizedBox(height: 12),
+                            ),
+                            const SizedBox(height: 10),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: ElevatedButton.icon(
@@ -541,8 +649,18 @@ class PeriodicTrackingView extends GetView<PeriodicTrackingController> {
                                   backgroundColor: accent,
                                   foregroundColor:
                                       theme.semanticPalette.onAccent,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 8,
+                                  ),
+                                  visualDensity: VisualDensity.compact,
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                icon: const Icon(Icons.check_circle_rounded),
+                                icon: const Icon(
+                                  Icons.check_circle_rounded,
+                                  size: 18,
+                                ),
                                 label: Text('periodic_mark_done'.tr),
                               ),
                             ),

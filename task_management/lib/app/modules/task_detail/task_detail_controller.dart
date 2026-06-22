@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../core/widgets/app_date_picker_sheet.dart';
 import '../../core/widgets/app_snackbar.dart';
 import '../../data/models/task_model.dart';
+import '../../data/services/ad_service.dart';
 import '../../data/services/haptic_service.dart';
 import '../../data/services/hive_service.dart';
 import '../home/home_controller.dart';
@@ -108,6 +109,7 @@ class TaskDetailController extends GetxController {
       await HapticService.vibration();
       Get.back(result: true);
       AppSnackbar.showSuccess(title, 'save_success'.tr);
+      await AdService.registerTaskCreated();
     }
   }
 
